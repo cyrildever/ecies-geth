@@ -173,6 +173,7 @@ export const encrypt = (publicKeyTo: Buffer, msg: Buffer, opts?: { iv?: Buffer, 
 }
 
 const metaLength = 1 + 64 + 16 + 32
+
 /**
  * Decrypt message using given private key.
  * 

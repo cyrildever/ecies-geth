@@ -35,19 +35,19 @@ Although this module is primarily developed for ECIES encryption/decryption, ext
 #### ECIES Encryption / Decryption
 
 ```js
-const crypto = require("crypto")
-const ecies = require("ecies-geth")
+const crypto = require("crypto");
+const ecies = require("ecies-geth");
 
-var privateKeyA = crypto.randomBytes(32)
-var publicKeyA = ecies.getPublic(privateKeyA)
-var privateKeyB = crypto.randomBytes(32)
-var publicKeyB = ecies.getPublic(privateKeyB)
+var privateKeyA = crypto.randomBytes(32);
+var publicKeyA = ecies.getPublic(privateKeyA);
+var privateKeyB = crypto.randomBytes(32);
+var publicKeyB = ecies.getPublic(privateKeyB);
 
 // Encrypting the message for B.
 ecies.encrypt(publicKeyB, Buffer.from("msg to b")).then(function(encrypted) {
   // B decrypting the message.
   ecies.decrypt(privateKeyB, encrypted).then(function(plaintext) {
-    console.log("Message to part B:", plaintext.toString())
+    console.log("Message to part B:", plaintext.toString());
   });
 });
 
@@ -55,7 +55,7 @@ ecies.encrypt(publicKeyB, Buffer.from("msg to b")).then(function(encrypted) {
 ecies.encrypt(publicKeyA, Buffer.from("msg to a")).then(function(encrypted) {
   // A decrypting the message.
   ecies.decrypt(privateKeyA, encrypted).then(function(plaintext) {
-    console.log("Message to part A:", plaintext.toString())
+    console.log("Message to part A:", plaintext.toString());
   });
 });
 ```
@@ -63,38 +63,38 @@ ecies.encrypt(publicKeyA, Buffer.from("msg to a")).then(function(encrypted) {
 #### Signing 
 
 ```js
-const crypto = require("crypto")
-const ecies = require("ecies-geth")
+const crypto = require("crypto");
+const ecies = require("ecies-geth");
 
 // A new random 32-byte private key.
 var privateKey = crypto.randomBytes(32)
 // Corresponding uncompressed (65-byte) public key.
-var publicKey = ecies.getPublic(privateKey)
+var publicKey = ecies.getPublic(privateKey);
 
 var str = "message to sign";
 // Always hash your message to sign!
-var msg = crypto.createHash("sha256").update(str).digest()
+var msg = crypto.createHash("sha256").update(str).digest();
 
 ecies.sign(privateKey, msg).then(function(sig) {
-  console.log("Signature in DER format:", sig)
+  console.log("Signature in DER format:", sig);
   ecies.verify(publicKey, msg, sig).then(function() {
-    console.log("Signature is OK")
+    console.log("Signature is OK");
   }).catch(function() {
-    console.log("Signature is BAD")
-  })
+    console.log("Signature is BAD");
+  });
 })
 ```
 
 #### ECDH
 
 ```js
-const crypto = require("crypto")
-const ecies = require("ecies-geth")
+const crypto = require("crypto");
+const ecies = require("ecies-geth");
 
-var privateKeyA = crypto.randomBytes(32)
-var publicKeyA = ecies.getPublic(privateKeyA)
-var privateKeyB = crypto.randomBytes(32)
-var publicKeyB = ecies.getPublic(privateKeyB)
+var privateKeyA = crypto.randomBytes(32);
+var publicKeyA = ecies.getPublic(privateKeyA);
+var privateKeyB = crypto.randomBytes(32);
+var publicKeyB = ecies.getPublic(privateKeyB);
 
 ecies.derive(privateKeyA, publicKeyB).then(function(sharedKey1) {
   ecies.derive(privateKeyB, publicKeyA).then(function(sharedKey2) {
