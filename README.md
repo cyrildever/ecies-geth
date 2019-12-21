@@ -26,11 +26,15 @@ The ECIES implementation given here is solely based off Geth's and Parity's impl
 
 ### Usage
 
+```console
+foo@bar:~$ npm install ecies-geth
+```
+
 Although this module is primarily developed for ECIES encryption/decryption, extra elliptic curve functionality is provided.
 
 #### ECIES Encryption / Decryption
 
-```typescript
+```js
 const crypto = require("crypto")
 const ecies = require("ecies-geth")
 
@@ -58,7 +62,7 @@ ecies.encrypt(publicKeyA, Buffer.from("msg to a")).then(function(encrypted) {
 
 #### Signing 
 
-```typescript
+```js
 const crypto = require("crypto")
 const ecies = require("ecies-geth")
 
@@ -83,7 +87,7 @@ ecies.sign(privateKey, msg).then(function(sig) {
 
 #### ECDH
 
-```typescript
+```js
 const crypto = require("crypto")
 const ecies = require("ecies-geth")
 
