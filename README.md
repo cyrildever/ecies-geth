@@ -103,7 +103,7 @@ ecies.derive(privateKeyA, publicKeyB).then(function(sharedKey1) {
 ### License
 
 This module is distributed under an MIT license.
-See the [LICENSE.md](LICENSE.md) file.
+See the [LICENSE](LICENSE) file.
 
 
 <hr />
