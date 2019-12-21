@@ -5,8 +5,8 @@ chai.use(chaiAsPromised)
 chai.should()
 const expect = chai.expect
 
-type ECIES = typeof import('../../lib/src/typescript/node') //only import type from the node
-const ecies = require('../../lib/src/typescript/index') as ECIES
+type ECIES = typeof import('../../../lib/src/typescript/node') //only import type from the node
+const ecies = require('../../../lib/src/typescript/index') as ECIES
 
 describe('ecies', () => {
     describe('kdf', () => {
