@@ -24,7 +24,7 @@
     "ecdsa",
     "ecdh"
   ],
-  "author": "Edgewhere <contact@edgehwere.fr>",
+  "author": "Edgewhere <contact@edgewhere.fr>",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/edgewhere/ecies-geth/issues"
