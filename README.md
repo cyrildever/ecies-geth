@@ -14,7 +14,7 @@ Edgewhere needed to have a JavaScript library fully compliant with the way the G
 
 As with `eccrypto`, this library provides two implementations for Browser and NodeJS with the same API. 
 
-The ECIES implementation details mimic those introduced used by both Geth and Parity, which are:
+The ECIES implementation details mimic those introduced by both Geth and Parity, which are:
 * Implements a SHA-256 Key Derivation Function (KDF);
 * ECDH based only on the `secp256k1` curve (to match common blockchain transaction signing);
 * Uses AES-128-CTR based symmetric encryption (with a 128-bit shared key derived from ECDH).
@@ -26,8 +26,8 @@ The ECIES implementation given here is solely based off Geth's and Parity's impl
 
 ### Usage
 
-```console
-foo@bar:~$ npm install ecies-geth
+```
+npm i ecies-geth
 ```
 
 Although this module is primarily developed for ECIES encryption/decryption, extra elliptic curve functionality is provided.
@@ -38,10 +38,10 @@ Although this module is primarily developed for ECIES encryption/decryption, ext
 const crypto = require("crypto");
 const ecies = require("ecies-geth");
 
-var privateKeyA = crypto.randomBytes(32);
-var publicKeyA = ecies.getPublic(privateKeyA);
-var privateKeyB = crypto.randomBytes(32);
-var publicKeyB = ecies.getPublic(privateKeyB);
+const privateKeyA = crypto.randomBytes(32);
+const publicKeyA = ecies.getPublic(privateKeyA);
+const privateKeyB = crypto.randomBytes(32);
+const publicKeyB = ecies.getPublic(privateKeyB);
 
 // Encrypting the message for B.
 ecies.encrypt(publicKeyB, Buffer.from("msg to b")).then(function(encrypted) {
@@ -67,13 +67,13 @@ const crypto = require("crypto");
 const ecies = require("ecies-geth");
 
 // A new random 32-byte private key.
-var privateKey = crypto.randomBytes(32)
+const privateKey = crypto.randomBytes(32)
 // Corresponding uncompressed (65-byte) public key.
-var publicKey = ecies.getPublic(privateKey);
+const publicKey = ecies.getPublic(privateKey);
 
-var str = "message to sign";
+const str = "message to sign";
 // Always hash your message to sign!
-var msg = crypto.createHash("sha256").update(str).digest();
+const msg = crypto.createHash("sha256").update(str).digest();
 
 ecies.sign(privateKey, msg).then(function(sig) {
   console.log("Signature in DER format:", sig);
@@ -91,10 +91,10 @@ ecies.sign(privateKey, msg).then(function(sig) {
 const crypto = require("crypto");
 const ecies = require("ecies-geth");
 
-var privateKeyA = crypto.randomBytes(32);
-var publicKeyA = ecies.getPublic(privateKeyA);
-var privateKeyB = crypto.randomBytes(32);
-var publicKeyB = ecies.getPublic(privateKeyB);
+const privateKeyA = crypto.randomBytes(32);
+const publicKeyA = ecies.getPublic(privateKeyA);
+const privateKeyB = crypto.randomBytes(32);
+const publicKeyB = ecies.getPublic(privateKeyB);
 
 ecies.derive(privateKeyA, publicKeyB).then(function(sharedKey1) {
   ecies.derive(privateKeyB, publicKeyA).then(function(sharedKey2) {
