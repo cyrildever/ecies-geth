@@ -67,4 +67,4 @@ typings/
 .vscode
 package-lock.json
 
-dist/test
+dist
