@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "JavaScript Elliptic Curve Integrated Encryption Scheme (ECIES) Library - Based off Geth's implementation",
   "main": "dist/lib/src/typescript/index.js",
-  "types": "dist/lib/src/typescript/index.d.ts",
+  "types": "index.d.ts",
   "browser": "dist/lib/src/typescript/browser.js",
   "scripts": {
     "build": "tsc",
