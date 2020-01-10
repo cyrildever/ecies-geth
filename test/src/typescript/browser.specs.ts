@@ -1,12 +1,10 @@
-import * as chai from 'chai'
-import 'mocha'
-import chaiAsPromised from 'chai-as-promised'
-chai.use(chaiAsPromised)
-chai.should()
-const expect = chai.expect
-
 type ECIES = typeof import('../../..') //only import type from the node
-const ecies = require('../../..') as ECIES
+const ecies = require('../../../lib/src/typescript/index') as ECIES
+
+const chaiAsPromised = require("chai-as-promised");
+chai.use(chaiAsPromised)
+
+declare function expect(val: any, message?: string): any
 
 describe('ecies', () => {
     describe('kdf', () => {
@@ -43,7 +41,7 @@ describe('ecies', () => {
             const secret = Buffer.from('b9fc3b425d6c1745b9c963c97e6e1d4c1db7a093a36e0cf7c0bf85dc1130b8a0', 'hex')
             const found = ecies.getPublic(secret)
 
-            return expect(found).to.be.fulfilled
+            return expect(found)
         })
         it('should NOT accept a smaller buffer as parameter', () => {
             const smallerSecret = Buffer.from('b9fc3b425d6c1745b9c9631d4c1db7a093a36e0cf7c0bf85dc1130b8a0', 'hex')
@@ -288,7 +286,7 @@ describe('ecies', () => {
             const encrypted = Buffer.from('041891f11182f69dfd67dc190ccd649445182c6474f69c9f3885c99733b056fb53e1a30b90b6d2a2624449fda885adcba50334024b20081b07f95f3cc92a93dbedccf75890cd7ac088b0810058c272ef25a4028875342c5dfc36b54f156cd26b69109625e5374bc689c79196d98ccc9ad5b7099e6484', 'hex')
             const found = ecies.decrypt(secret, encrypted)
 
-            return found.should.be.fulfilled
+            return expect(found)
         })
         it('should NOT accept a secret key smaller than 32 bytes', () => {
             const smallerSecret = Buffer.from('b9fc3b425d6c1745b9c963c97e6e1d4c1db7a093a37c0bf85dc1130b8a0', 'hex')
@@ -316,7 +314,7 @@ describe('ecies', () => {
             const smallerEncrypted = Buffer.from('041891f11182f69dfd67dc190c1a30b90b6d2a2624449fda885adcba50334024b20081b07f95f3cc92a93dbedccf75890cd7ac088b0810058c272ef25a4028875342c5dfc36b54f156cd26b69109625e5374bc689c79196d98ccc9ad5b7099e6484', 'hex')
             const found = ecies.decrypt(secret, smallerEncrypted)
 
-            return expect(found).to.be.rejectedWith(`Invalid Ciphertext. Data is too small. It should ba at least 113`)
+            return expect(found).to.be.rejectedWith(`Invalid Ciphertext. Data is too small. It should ba at least 113 bytes`)
         })
     })
     describe('encrypt and decrypt', () => {

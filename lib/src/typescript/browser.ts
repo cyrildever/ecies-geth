@@ -52,8 +52,8 @@ const randomBytes = (size: number): Buffer =>
     crypto.getRandomValues(Buffer.alloc(size))
 
 // Get the browser SHA256 implementation
-const sha256 = (msg: Int8Array | Int16Array | Int32Array | Uint8Array | Uint16Array | Uint32Array | Uint8ClampedArray | Float32Array | Float64Array | DataView | ArrayBuffer): PromiseLike<Buffer> =>
-    subtle.digest({ name: "SHA-256" }, msg).then(Buffer.from)
+const sha256 = (msg: Int8Array | Int16Array | Int32Array | Uint8Array | Uint16Array | Uint32Array | Uint8ClampedArray | Float32Array | Float64Array | DataView | ArrayBuffer): Promise<Buffer> =>
+    subtle.digest({ name: "SHA-256" }, msg).then(Buffer.from) as Promise<Buffer>
 
 // The KDF as implemented in Parity mimics Geth's implementation
 export const kdf = (secret: Buffer, outputLength: number): Promise<Buffer> => {
@@ -72,20 +72,27 @@ export const kdf = (secret: Buffer, outputLength: number): Promise<Buffer> => {
     return willBeResult;
 }
 
-// Get the AES-128-CTR browser implementation
-const getAes = (op: typeof subtle.encrypt | typeof subtle.decrypt) => (
-    counter: Buffer,
-    key: Int8Array | Int16Array | Int32Array | Uint8Array | Uint16Array | Uint32Array | Uint8ClampedArray | Float32Array | Float64Array | DataView | ArrayBuffer,
-    data: Int8Array | Int16Array | Int32Array | Uint8Array | Uint16Array | Uint32Array | Uint8ClampedArray | Float32Array | Float64Array | DataView | ArrayBuffer
-) =>
-    subtle
-        .importKey("raw", key, "AES-CTR", false, [op.name])
-        .then(cryptoKey =>
-            op({ name: "AES-CTR", counter: counter, length: 128 }, cryptoKey, data)
-        ).then(Buffer.from)
+const aesCtrEncrypt = (
+  counter: Buffer,
+  key: Int8Array | Int16Array | Int32Array | Uint8Array | Uint16Array | Uint32Array | Uint8ClampedArray | Float32Array | Float64Array | DataView | ArrayBuffer,
+  data: Int8Array | Int16Array | Int32Array | Uint8Array | Uint16Array | Uint32Array | Uint8ClampedArray | Float32Array | Float64Array | DataView | ArrayBuffer
+): Promise<Buffer> =>
+  subtle
+      .importKey('raw', key, 'AES-CTR', false, ['encrypt'])
+      .then(cryptoKey =>
+        subtle.encrypt({ name: 'AES-CTR', counter: counter, length: 128 }, cryptoKey, data)
+      ).then(Buffer.from) as Promise<Buffer>
 
-const aesCtrEncrypt = getAes(subtle.encrypt)
-const aesCtrDecrypt = getAes(subtle.decrypt)
+const aesCtrDecrypt = (
+  counter: Buffer,
+  key: Int8Array | Int16Array | Int32Array | Uint8Array | Uint16Array | Uint32Array | Uint8ClampedArray | Float32Array | Float64Array | DataView | ArrayBuffer,
+  data: Int8Array | Int16Array | Int32Array | Uint8Array | Uint16Array | Uint32Array | Uint8ClampedArray | Float32Array | Float64Array | DataView | ArrayBuffer
+): Promise<Buffer> =>
+  subtle
+      .importKey('raw', key, 'AES-CTR', false, ['decrypt'])
+      .then(cryptoKey =>
+          subtle.decrypt({ name: 'AES-CTR', counter: counter, length: 128 }, cryptoKey, data)
+      ).then(Buffer.from) as Promise<Buffer>
 
 const hmacSha256Sign = (
     key: Int8Array | Int16Array | Int32Array | Uint8Array | Uint16Array | Uint32Array | Uint8ClampedArray | Float32Array | Float64Array | DataView | ArrayBuffer,
@@ -101,10 +108,10 @@ const hmacSha256Verify = (
     key: Int8Array | Int16Array | Int32Array | Uint8Array | Uint16Array | Uint32Array | Uint8ClampedArray | Float32Array | Float64Array | DataView | ArrayBuffer,
     msg: Int8Array | Int16Array | Int32Array | Uint8Array | Uint16Array | Uint32Array | Uint8ClampedArray | Float32Array | Float64Array | DataView | ArrayBuffer,
     sig: Int8Array | Int16Array | Int32Array | Uint8Array | Uint16Array | Uint32Array | Uint8ClampedArray | Float32Array | Float64Array | DataView | ArrayBuffer,
-): PromiseLike<boolean> => {
+): Promise<boolean> => {
     const algorithm = { name: "HMAC", hash: { name: "SHA-256" } }
     const keyp = subtle.importKey("raw", key, algorithm, false, ["verify"])
-    return keyp.then(cryptoKey => subtle.verify(algorithm, cryptoKey, sig, msg))
+    return keyp.then(cryptoKey => subtle.verify(algorithm, cryptoKey, sig, msg)) as Promise<boolean>
 }
 
 /**
@@ -116,7 +123,7 @@ const hmacSha256Verify = (
  */
 export const getPublic = (privateKey: Buffer): Promise<Buffer> => new Promise((resolve, reject) => {
     if (privateKey.length !== 32)
-        reject(new Error('Bad private key'))
+        reject(new Error('Private key should be 32 bytes long'))
     else
         resolve(Buffer.from(ec.keyFromPrivate(privateKey).getPublic('array')))
 })
@@ -131,11 +138,11 @@ export const getPublic = (privateKey: Buffer): Promise<Buffer> => new Promise((r
 export const sign = (privateKey: Buffer, msg: Buffer): Promise<Buffer> =>
     new Promise((resolve, reject) => {
         if (privateKey.length !== 32)
-            reject(new Error('Bad private key'))
+            reject(new Error('Private key should be 32 bytes long'))
         else if (msg.length <= 0)
             reject(new Error('Message should not be empty'))
         else if (msg.length > 32)
-            reject(new Error('Message is too long'))
+            reject(new Error('Message is too long (max 32 bytes)'))
         else
             resolve(Buffer.from(ec.sign(msg, privateKey, { canonical: true }).toDER('hex'), 'hex'))
     })
@@ -151,13 +158,13 @@ export const sign = (privateKey: Buffer, msg: Buffer): Promise<Buffer> =>
 export const verify = (publicKey: Buffer, msg: Buffer, sig: Buffer): Promise<null> =>
     new Promise((resolve, reject) => {
         if (publicKey.length !== 65 || publicKey[0] !== 4)
-            reject(new Error('Bad public key'))
+            reject(new Error('Public key should 65 bytes long'))
         else if (msg.length <= 0)
             reject(new Error('Message should not be empty'))
         else if (msg.length > 32)
-            reject(new Error('Message is too long'))
+            reject(new Error('Message is too long (max 32 bytes)'))
         else if (!ec.verify(msg, sig.toString('hex') as any, publicKey, 'hex'))
-            reject(new Error("Bad signature"))
+            reject(new Error('Bad signature'))
         else
             resolve(null)
     })
@@ -196,18 +203,22 @@ export const derive = (privateKeyA: Buffer, publicKeyB: Buffer): Promise<Buffer>
 export const encrypt = (publicKeyTo: Buffer, msg: Buffer, opts?: { iv?: Buffer, ephemPrivateKey?: Buffer }): Promise<Buffer> => {
     opts = opts || {}
     const ephemPrivateKey = opts.ephemPrivateKey || randomBytes(32)
-    const willBeSharedPx = derive(ephemPrivateKey, publicKeyTo)
-    const willBeHash = willBeSharedPx.then(sharedPx => kdf(sharedPx, 32))
-    const iv = opts.iv || randomBytes(16)
-    const willBeEncryptionKey = willBeHash.then(hash => hash.slice(0, 16))
-    const willBeMacKey = willBeHash.then(hash => sha256(hash.slice(16)))
-    const willBeCipherText = willBeEncryptionKey.then(encryptionKey => aesCtrEncrypt(iv, encryptionKey, msg))
-    const willBeIvCipherText = willBeCipherText.then(cipherText => Buffer.concat([iv, cipherText]))
-    const willBeHMAC = willBeMacKey.then(macKey => willBeIvCipherText.then(ivCipherText => hmacSha256Sign(macKey, ivCipherText)))
-    const willBeEphemPublicKey = getPublic(ephemPrivateKey)
-    return willBeEphemPublicKey.then(ephemPublicKey => willBeIvCipherText.then(ivCipherText => willBeHMAC.then(HMAC =>
-        Buffer.concat([ephemPublicKey, ivCipherText, HMAC])
-    )))
+    return derive(ephemPrivateKey, publicKeyTo)
+      .then(sharedPx => kdf(sharedPx, 32))
+      .then(hash => {
+        const iv = opts!.iv || randomBytes(16)
+        const encryptionKey = hash.slice(0, 16)
+        return aesCtrEncrypt(iv, encryptionKey, msg)
+          .then(cipherText => Buffer.concat([iv, cipherText]))
+          .then(ivCipherText =>
+            sha256(hash.slice(16))
+              .then(macKey => hmacSha256Sign(macKey, ivCipherText))
+              .then(HMAC =>
+                getPublic(ephemPrivateKey)
+                  .then(ephemPublicKey => Buffer.concat([ephemPublicKey, ivCipherText, HMAC]))
+              )
+          )
+      })
 }
 
 const metaLength = 1 + 64 + 16 + 32
@@ -222,9 +233,9 @@ const metaLength = 1 + 64 + 16 + 32
 export const decrypt = (privateKey: Buffer, encrypted: Buffer): Promise<Buffer> =>
     new Promise((resolve, reject) => {
         if (encrypted.length <= metaLength)
-            reject(new Error(`Invalid Ciphertext. Data is too small, should be more than ${metaLength} bytes`))
-        else if (encrypted[0] < 2 && encrypted[0] > 4)
-            reject(new Error(`Not a valid ciphertext. It should begin with 2, 3 or 4 but actualy begin with ${encrypted[0]}`))
+            reject(new Error(`Invalid Ciphertext. Data is too small. It should ba at least ${metaLength} bytes`))
+        else if (encrypted[0] !== 4)
+            reject(new Error(`Not a valid ciphertext. It should begin with 4 but actualy begin with ${encrypted[0]}`))
         else {
             // deserialise
             const ephemPublicKey = encrypted.slice(0, 65)
@@ -235,20 +246,15 @@ export const decrypt = (privateKey: Buffer, encrypted: Buffer): Promise<Buffer> 
             const msgMac = encrypted.slice(65 + 16 + cipherTextLength)
 
             // check HMAC
-            const willBePx = derive(privateKey, ephemPublicKey)
-            const willBeHash = willBePx.then(px => kdf(px, 32))
-            const willBeEncryptionKey = willBeHash.then(hash => hash.slice(0, 16))
-            const willBeMacKey = willBeHash.then(hash => sha256(hash.slice(16)))
-            willBeMacKey.then(macKey => hmacSha256Verify(macKey, cipherAndIv, msgMac))
-                .then(isHmacGood => willBeEncryptionKey.then(encryptionKey => {
-                    if (!isHmacGood)
-                        reject(new Error('Incorrect MAC'))
-                    else {
-                        // decrypt message
-                        aesCtrDecrypt(iv, encryptionKey, ciphertext).then(plainText =>
-                            resolve(Buffer.from(plainText))
-                        )
-                    }
-                })).catch(reject)
+            resolve(derive(privateKey, ephemPublicKey)
+              .then(px => kdf(px, 32))
+              .then(hash => sha256(hash.slice(16)).then(macKey => [hash.slice(0, 16), macKey]))
+              .then(([encryptionKey, macKey]) => 
+                hmacSha256Verify(macKey, cipherAndIv, msgMac)
+                  .then(isHmacGood => !isHmacGood
+                    ? Promise.reject(new Error('Incorrect MAC'))
+                    : aesCtrDecrypt(iv, encryptionKey, ciphertext)
+                  )
+              ).then(Buffer.from))
         }
     })

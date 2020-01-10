@@ -1,5 +1,5 @@
 /// <reference types="node" />
-export declare const kdf: (secret: Buffer, outputLength: number) => Buffer;
+export declare const kdf: (secret: Buffer, outputLength: number) => Promise<Buffer>;
 /**
  * Compute the public key for a given private key.
  *
