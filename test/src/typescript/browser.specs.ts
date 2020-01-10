@@ -307,7 +307,7 @@ describe('ecies', () => {
             const encryptedWithFalsePublicKey = Buffer.from('031891f11182f69dfd67dc190ccd649445182c6474f69c9f3885c99733b056fb53e1a30b90b6d2a2624449fda885adcba50334024b20081b07f95f3cc92a93dbedccf75890cd7ac088b0810058c272ef25a4028875342c5dfc36b54f156cd26b69109625e5374bc689c79196d98ccc9ad5b7099e6484', 'hex')
             const found = ecies.decrypt(secret, encryptedWithFalsePublicKey)
 
-            return expect(found).to.be.rejectedWith(`Bad public key, a valid public key would begin with 4`)
+            return expect(found).to.be.rejectedWith(`Not a valid ciphertext. It should begin with 4 but actualy begin with 3`)
         })
         it(`should NOT accept an encrypted msg smaller than ${metaLength} bytes`, () => {
             const secret = Buffer.from('b9fc3b425d6c1745b9c963c97e6e1d4c1db7a093a36e0cf7c0bf85dc1130b8a0', 'hex')

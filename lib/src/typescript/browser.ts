@@ -234,8 +234,8 @@ export const decrypt = (privateKey: Buffer, encrypted: Buffer): Promise<Buffer> 
     new Promise((resolve, reject) => {
         if (encrypted.length <= metaLength)
             reject(new Error(`Invalid Ciphertext. Data is too small. It should ba at least ${metaLength} bytes`))
-        else if (encrypted[0] !== 2 && encrypted[0] !== 3 && encrypted[0] !== 4)
-            reject(new Error(`Not a valid ciphertext. It should begin with 2, 3 or 4 but actualy begin with ${encrypted[0]}`))
+        else if (encrypted[0] !== 4)
+            reject(new Error(`Not a valid ciphertext. It should begin with 4 but actualy begin with ${encrypted[0]}`))
         else {
             // deserialise
             const ephemPublicKey = encrypted.slice(0, 65)
