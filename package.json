@@ -7,7 +7,7 @@
   "browser": "dist/lib/src/typescript/browser.js",
   "scripts": {
     "build": "tsc",
-    "test": "mocha 'test/**/*.specs.ts' --require ts-node/register"
+    "test": "mocha 'test/src/typescript/node.specs.ts' --require ts-node/register && tsc && browserify ./dist/test/src/typescript/browser.specs.js -o dist/test/src/typescript/index.js && live-server --port=9001 --mount=/:test/src/typescript"
   },
   "repository": {
     "type": "git",
@@ -38,8 +38,10 @@
     "@types/node": "^12.12.21",
     "@types/secp256k1": "^3.5.0",
     "@types/typescript": "^2.0.0",
+    "browserify": "^16.5.0",
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
+    "live-server": "^1.2.1",
     "mocha": "^6.2.2",
     "ts-node": "^8.5.4",
     "typescript": "^3.7.4"

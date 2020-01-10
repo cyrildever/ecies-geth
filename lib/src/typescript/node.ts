@@ -73,18 +73,20 @@ const pad32 = (msg: Buffer): Buffer => {
 }
 
 // The KDF as implemented in Parity mimics Geth's implementation
-export const kdf = function (secret: Buffer, outputLength: number): Buffer {
-    let ctr = 1
-    let written = 0
-    let result = Buffer.from('')
-    while (written < outputLength) {
-        const ctrs = Buffer.from([ctr >> 24, ctr >> 16, ctr >> 8, ctr])
-        const hashResult = sha256(Buffer.concat([ctrs, secret]))
-        result = Buffer.concat([result, hashResult])
-        written += 32
-        ctr += 1
-    }
-    return result
+export const kdf = function (secret: Buffer, outputLength: number): Promise<Buffer> {
+    return new Promise(resolve => {
+      let ctr = 1
+      let written = 0
+      let result = Buffer.from('')
+      while (written < outputLength) {
+          const ctrs = Buffer.from([ctr >> 24, ctr >> 16, ctr >> 8, ctr])
+          const hashResult = sha256(Buffer.concat([ctrs, secret]))
+          result = Buffer.concat([result, hashResult])
+          written += 32
+          ctr += 1
+      }
+      resolve(result)
+    })
 }
 
 /**
@@ -184,8 +186,9 @@ export const derive = (privateKey: Buffer, publicKey: Buffer): Promise<Buffer> =
 export const encrypt = (publicKeyTo: Buffer, msg: Buffer, opts?: { iv?: Buffer, ephemPrivateKey?: Buffer }): Promise<Buffer> => {
     opts = opts || {}
     const ephemPrivateKey = opts.ephemPrivateKey || randomBytes(32)
-    return derive(ephemPrivateKey, publicKeyTo).then(sharedPx => {
-        const hash = kdf(sharedPx, 32)
+    return derive(ephemPrivateKey, publicKeyTo)
+      .then(sharedPx => kdf(sharedPx, 32))
+      .then(hash => {
         const encryptionKey = hash.slice(0, 16)
         const iv = opts!.iv || randomBytes(16)
         const macKey = sha256(hash.slice(16))
@@ -208,9 +211,9 @@ const metaLength = 1 + 64 + 16 + 32
  */
 export const decrypt = (privateKey: Buffer, encrypted: Buffer): Promise<Buffer> => new Promise((resolve, reject) => {
     if (encrypted.length < metaLength)
-        reject(new Error(`Invalid Ciphertext. Data is too small. It should ba at least ${metaLength}`))
-    else if (encrypted[0] !== 4)
-        reject(new Error('Not valid ciphertext. A valid ciphertext would begin with 4'))
+      reject(new Error(`Invalid Ciphertext. Data is too small. It should ba at least ${metaLength}`))
+    else if (encrypted[0] !== 2 && encrypted[0] !== 3 && encrypted[0] !== 4)
+      reject(new Error(`Not a valid ciphertext. It should begin with 2, 3 or 4 but actualy begin with ${encrypted[0]}`))
     else {
         // deserialise
         const ephemPublicKey = encrypted.slice(0, 65)
@@ -221,8 +224,9 @@ export const decrypt = (privateKey: Buffer, encrypted: Buffer): Promise<Buffer> 
         const msgMac = encrypted.slice(65 + 16 + cipherTextLength)
 
         // check HMAC
-        resolve(derive(privateKey, ephemPublicKey).then(sharedPx => {
-            const hash = kdf(sharedPx, 32)
+        resolve(derive(privateKey, ephemPublicKey)
+          .then(sharedPx => kdf(sharedPx, 32))
+          .then(hash => {
             const encryptionKey = hash.slice(0, 16)
             const macKey = sha256(hash.slice(16))
             const currentHMAC = hmacSha256(macKey, cipherAndIv)
