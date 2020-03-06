@@ -31,12 +31,12 @@ import { ec as EC } from 'elliptic'
 
 //IE 11
 declare global {
-    interface Window {
-        msCrypto?: Crypto
-    }
-    interface Crypto {
-        webkitSubtle?: SubtleCrypto
-    }
+  interface Window {
+    msCrypto?: Crypto
+  }
+  interface Crypto {
+    webkitSubtle?: SubtleCrypto
+  }
 }
 
 const ec = new EC('secp256k1')
@@ -44,32 +44,32 @@ const crypto = window.crypto || window.msCrypto!
 const subtle: SubtleCrypto = (crypto.subtle || crypto.webkitSubtle)!
 
 if (subtle === undefined || crypto === undefined) //TODO maybe better ?
-    //throw new Error('crypto and/or subtle api unavailable')
-    console.error('crypto and/or subtle api unavailable')
+  //throw new Error('crypto and/or subtle api unavailable')
+  console.error('crypto and/or subtle api unavailable')
 
 // Use the browser RNG
 const randomBytes = (size: number): Buffer =>
-    crypto.getRandomValues(Buffer.alloc(size))
+  crypto.getRandomValues(Buffer.alloc(size))
 
 // Get the browser SHA256 implementation
 const sha256 = (msg: Int8Array | Int16Array | Int32Array | Uint8Array | Uint16Array | Uint32Array | Uint8ClampedArray | Float32Array | Float64Array | DataView | ArrayBuffer): Promise<Buffer> =>
-    subtle.digest({ name: "SHA-256" }, msg).then(Buffer.from) as Promise<Buffer>
+  subtle.digest({ name: "SHA-256" }, msg).then(Buffer.from) as Promise<Buffer>
 
 // The KDF as implemented in Parity mimics Geth's implementation
 export const kdf = (secret: Buffer, outputLength: number): Promise<Buffer> => {
-    let ctr = 1
-    let written = 0
-    let willBeResult = Promise.resolve(Buffer.from(''))
-    while (written < outputLength) {
-        const ctrs = Buffer.from([ctr >> 24, ctr >> 16, ctr >> 8, ctr])
-        const willBeHashResult = sha256(Buffer.concat([ctrs, secret]))
-        willBeResult = willBeResult.then(result => willBeHashResult.then(hashResult =>
-            Buffer.concat([result, hashResult])
-        ))
-        written += 32
-        ctr += 1
-    }
-    return willBeResult;
+  let ctr = 1
+  let written = 0
+  let willBeResult = Promise.resolve(Buffer.from(''))
+  while (written < outputLength) {
+    const ctrs = Buffer.from([ctr >> 24, ctr >> 16, ctr >> 8, ctr])
+    const willBeHashResult = sha256(Buffer.concat([ctrs, secret]))
+    willBeResult = willBeResult.then(result => willBeHashResult.then(hashResult =>
+      Buffer.concat([result, hashResult])
+    ))
+    written += 32
+    ctr += 1
+  }
+  return willBeResult;
 }
 
 const aesCtrEncrypt = (
@@ -78,10 +78,10 @@ const aesCtrEncrypt = (
   data: Int8Array | Int16Array | Int32Array | Uint8Array | Uint16Array | Uint32Array | Uint8ClampedArray | Float32Array | Float64Array | DataView | ArrayBuffer
 ): Promise<Buffer> =>
   subtle
-      .importKey('raw', key, 'AES-CTR', false, ['encrypt'])
-      .then(cryptoKey =>
-        subtle.encrypt({ name: 'AES-CTR', counter: counter, length: 128 }, cryptoKey, data)
-      ).then(Buffer.from) as Promise<Buffer>
+    .importKey('raw', key, 'AES-CTR', false, ['encrypt'])
+    .then(cryptoKey =>
+      subtle.encrypt({ name: 'AES-CTR', counter: counter, length: 128 }, cryptoKey, data)
+    ).then(Buffer.from) as Promise<Buffer>
 
 const aesCtrDecrypt = (
   counter: Buffer,
@@ -89,29 +89,29 @@ const aesCtrDecrypt = (
   data: Int8Array | Int16Array | Int32Array | Uint8Array | Uint16Array | Uint32Array | Uint8ClampedArray | Float32Array | Float64Array | DataView | ArrayBuffer
 ): Promise<Buffer> =>
   subtle
-      .importKey('raw', key, 'AES-CTR', false, ['decrypt'])
-      .then(cryptoKey =>
-          subtle.decrypt({ name: 'AES-CTR', counter: counter, length: 128 }, cryptoKey, data)
-      ).then(Buffer.from) as Promise<Buffer>
+    .importKey('raw', key, 'AES-CTR', false, ['decrypt'])
+    .then(cryptoKey =>
+      subtle.decrypt({ name: 'AES-CTR', counter: counter, length: 128 }, cryptoKey, data)
+    ).then(Buffer.from) as Promise<Buffer>
 
 const hmacSha256Sign = (
-    key: Int8Array | Int16Array | Int32Array | Uint8Array | Uint16Array | Uint32Array | Uint8ClampedArray | Float32Array | Float64Array | DataView | ArrayBuffer,
-    msg: Int8Array | Int16Array | Int32Array | Uint8Array | Uint16Array | Uint32Array | Uint8ClampedArray | Float32Array | Float64Array | DataView | ArrayBuffer
+  key: Int8Array | Int16Array | Int32Array | Uint8Array | Uint16Array | Uint32Array | Uint8ClampedArray | Float32Array | Float64Array | DataView | ArrayBuffer,
+  msg: Int8Array | Int16Array | Int32Array | Uint8Array | Uint16Array | Uint32Array | Uint8ClampedArray | Float32Array | Float64Array | DataView | ArrayBuffer
 ): PromiseLike<Buffer> => {
-    const algorithm = { name: "HMAC", hash: { name: "SHA-256" } }
-    return subtle.importKey("raw", key, algorithm, false, ["sign"])
-        .then(cryptoKey => subtle.sign(algorithm, cryptoKey, msg))
-        .then(Buffer.from)
+  const algorithm = { name: "HMAC", hash: { name: "SHA-256" } }
+  return subtle.importKey("raw", key, algorithm, false, ["sign"])
+    .then(cryptoKey => subtle.sign(algorithm, cryptoKey, msg))
+    .then(Buffer.from)
 }
 
 const hmacSha256Verify = (
-    key: Int8Array | Int16Array | Int32Array | Uint8Array | Uint16Array | Uint32Array | Uint8ClampedArray | Float32Array | Float64Array | DataView | ArrayBuffer,
-    msg: Int8Array | Int16Array | Int32Array | Uint8Array | Uint16Array | Uint32Array | Uint8ClampedArray | Float32Array | Float64Array | DataView | ArrayBuffer,
-    sig: Int8Array | Int16Array | Int32Array | Uint8Array | Uint16Array | Uint32Array | Uint8ClampedArray | Float32Array | Float64Array | DataView | ArrayBuffer,
+  key: Int8Array | Int16Array | Int32Array | Uint8Array | Uint16Array | Uint32Array | Uint8ClampedArray | Float32Array | Float64Array | DataView | ArrayBuffer,
+  msg: Int8Array | Int16Array | Int32Array | Uint8Array | Uint16Array | Uint32Array | Uint8ClampedArray | Float32Array | Float64Array | DataView | ArrayBuffer,
+  sig: Int8Array | Int16Array | Int32Array | Uint8Array | Uint16Array | Uint32Array | Uint8ClampedArray | Float32Array | Float64Array | DataView | ArrayBuffer,
 ): Promise<boolean> => {
-    const algorithm = { name: "HMAC", hash: { name: "SHA-256" } }
-    const keyp = subtle.importKey("raw", key, algorithm, false, ["verify"])
-    return keyp.then(cryptoKey => subtle.verify(algorithm, cryptoKey, sig, msg)) as Promise<boolean>
+  const algorithm = { name: "HMAC", hash: { name: "SHA-256" } }
+  const keyp = subtle.importKey("raw", key, algorithm, false, ["verify"])
+  return keyp.then(cryptoKey => subtle.verify(algorithm, cryptoKey, sig, msg)) as Promise<boolean>
 }
 
 /**
@@ -122,10 +122,10 @@ const hmacSha256Verify = (
  * @function
  */
 export const getPublic = (privateKey: Buffer): Promise<Buffer> => new Promise((resolve, reject) => {
-    if (privateKey.length !== 32)
-        reject(new Error('Private key should be 32 bytes long'))
-    else
-        resolve(Buffer.from(ec.keyFromPrivate(privateKey).getPublic('array')))
+  if (privateKey.length !== 32)
+    reject(new Error('Private key should be 32 bytes long'))
+  else
+    resolve(Buffer.from(ec.keyFromPrivate(privateKey).getPublic('array')))
 })
 
 /**
@@ -136,16 +136,16 @@ export const getPublic = (privateKey: Buffer): Promise<Buffer> => new Promise((r
  * @return {Promise.<Buffer>} A promise that resolves with the signature and rejects on bad key or message
  */
 export const sign = (privateKey: Buffer, msg: Buffer): Promise<Buffer> =>
-    new Promise((resolve, reject) => {
-        if (privateKey.length !== 32)
-            reject(new Error('Private key should be 32 bytes long'))
-        else if (msg.length <= 0)
-            reject(new Error('Message should not be empty'))
-        else if (msg.length > 32)
-            reject(new Error('Message is too long (max 32 bytes)'))
-        else
-            resolve(Buffer.from(ec.sign(msg, privateKey, { canonical: true }).toDER('hex'), 'hex'))
-    })
+  new Promise((resolve, reject) => {
+    if (privateKey.length !== 32)
+      reject(new Error('Private key should be 32 bytes long'))
+    else if (msg.length <= 0)
+      reject(new Error('Message should not be empty'))
+    else if (msg.length > 32)
+      reject(new Error('Message is too long (max 32 bytes)'))
+    else
+      resolve(Buffer.from(ec.sign(msg, privateKey, { canonical: true }).toDER('hex'), 'hex'))
+  })
 
 /**
  * Verify an ECDSA signature.
@@ -156,18 +156,18 @@ export const sign = (privateKey: Buffer, msg: Buffer): Promise<Buffer> =>
  * @return {Promise.<null>} A promise that resolves on correct signature and rejects on bad key or signature
  */
 export const verify = (publicKey: Buffer, msg: Buffer, sig: Buffer): Promise<null> =>
-    new Promise((resolve, reject) => {
-        if (publicKey.length !== 65 || publicKey[0] !== 4)
-            reject(new Error('Public key should 65 bytes long'))
-        else if (msg.length <= 0)
-            reject(new Error('Message should not be empty'))
-        else if (msg.length > 32)
-            reject(new Error('Message is too long (max 32 bytes)'))
-        else if (!ec.verify(msg, sig.toString('hex') as any, publicKey, 'hex'))
-            reject(new Error('Bad signature'))
-        else
-            resolve(null)
-    })
+  new Promise((resolve, reject) => {
+    if (publicKey.length !== 65 || publicKey[0] !== 4)
+      reject(new Error('Public key should 65 bytes long'))
+    else if (msg.length <= 0)
+      reject(new Error('Message should not be empty'))
+    else if (msg.length > 32)
+      reject(new Error('Message is too long (max 32 bytes)'))
+    else if (!ec.verify(msg, sig.toString('hex') as any, publicKey, 'hex'))
+      reject(new Error('Bad signature'))
+    else
+      resolve(null)
+  })
 
 /**
  * Derive shared secret for given private and public keys.
@@ -177,20 +177,20 @@ export const verify = (publicKey: Buffer, msg: Buffer, sig: Buffer): Promise<nul
  * @return {Promise.<Buffer>} A promise that resolves with the derived shared secret (Px, 32 bytes) and rejects on bad key
  */
 export const derive = (privateKeyA: Buffer, publicKeyB: Buffer): Promise<Buffer> =>
-    new Promise((resolve, reject) => {
-        if (privateKeyA.length !== 32)
-            reject(new Error(`Bad private key, it should be 32 bytes but it's actualy ${privateKeyA.length} bytes long`))
-        else if (publicKeyB.length !== 65)
-            reject(new Error(`Bad public key, it should be 65 bytes but it's actualy ${publicKeyB.length} bytes long`))
-        else if (publicKeyB[0] !== 4)
-            reject(new Error(`Bad public key, a valid public key would begin with 4`))
-        else {
-            const keyA = ec.keyFromPrivate(privateKeyA)
-            const keyB = ec.keyFromPublic(publicKeyB)
-            const Px = keyA.derive(keyB.getPublic())  // BN instance
-            resolve(Buffer.from(Px.toArray()))
-        }
-    })
+  new Promise((resolve, reject) => {
+    if (privateKeyA.length !== 32)
+      reject(new Error(`Bad private key, it should be 32 bytes but it's actually ${privateKeyA.length} bytes long`))
+    else if (publicKeyB.length !== 65)
+      reject(new Error(`Bad public key, it should be 65 bytes but it's actually ${publicKeyB.length} bytes long`))
+    else if (publicKeyB[0] !== 4)
+      reject(new Error(`Bad public key, a valid public key would begin with 4`))
+    else {
+      const keyA = ec.keyFromPrivate(privateKeyA)
+      const keyB = ec.keyFromPublic(publicKeyB)
+      const Px = keyA.derive(keyB.getPublic())  // BN instance
+      resolve(Buffer.from(Px.toArray()))
+    }
+  })
 
 /**
  * Encrypt message for given recepient's public key.
@@ -201,24 +201,24 @@ export const derive = (privateKeyA: Buffer, publicKeyB: Buffer): Promise<Buffer>
  * @return {Promise.<Buffer>} - A promise that resolves with the ECIES structure serialized
  */
 export const encrypt = (publicKeyTo: Buffer, msg: Buffer, opts?: { iv?: Buffer, ephemPrivateKey?: Buffer }): Promise<Buffer> => {
-    opts = opts || {}
-    const ephemPrivateKey = opts.ephemPrivateKey || randomBytes(32)
-    return derive(ephemPrivateKey, publicKeyTo)
-      .then(sharedPx => kdf(sharedPx, 32))
-      .then(hash => {
-        const iv = opts!.iv || randomBytes(16)
-        const encryptionKey = hash.slice(0, 16)
-        return aesCtrEncrypt(iv, encryptionKey, msg)
-          .then(cipherText => Buffer.concat([iv, cipherText]))
-          .then(ivCipherText =>
-            sha256(hash.slice(16))
-              .then(macKey => hmacSha256Sign(macKey, ivCipherText))
-              .then(HMAC =>
-                getPublic(ephemPrivateKey)
-                  .then(ephemPublicKey => Buffer.concat([ephemPublicKey, ivCipherText, HMAC]))
-              )
-          )
-      })
+  opts = opts || {}
+  const ephemPrivateKey = opts.ephemPrivateKey || randomBytes(32)
+  return derive(ephemPrivateKey, publicKeyTo)
+    .then(sharedPx => kdf(sharedPx, 32))
+    .then(hash => {
+      const iv = opts!.iv || randomBytes(16)
+      const encryptionKey = hash.slice(0, 16)
+      return aesCtrEncrypt(iv, encryptionKey, msg)
+        .then(cipherText => Buffer.concat([iv, cipherText]))
+        .then(ivCipherText =>
+          sha256(hash.slice(16))
+            .then(macKey => hmacSha256Sign(macKey, ivCipherText))
+            .then(HMAC =>
+              getPublic(ephemPrivateKey)
+                .then(ephemPublicKey => Buffer.concat([ephemPublicKey, ivCipherText, HMAC]))
+            )
+        )
+    })
 }
 
 const metaLength = 1 + 64 + 16 + 32
@@ -231,30 +231,30 @@ const metaLength = 1 + 64 + 16 + 32
  * @return {Promise.<Buffer>} - A promise that resolves with the plaintext on successful decryption and rejects on failure
  */
 export const decrypt = (privateKey: Buffer, encrypted: Buffer): Promise<Buffer> =>
-    new Promise((resolve, reject) => {
-        if (encrypted.length <= metaLength)
-            reject(new Error(`Invalid Ciphertext. Data is too small. It should ba at least ${metaLength} bytes`))
-        else if (encrypted[0] !== 4)
-            reject(new Error(`Not a valid ciphertext. It should begin with 4 but actualy begin with ${encrypted[0]}`))
-        else {
-            // deserialise
-            const ephemPublicKey = encrypted.slice(0, 65)
-            const cipherTextLength = encrypted.length - metaLength
-            const iv = encrypted.slice(65, 65 + 16)
-            const cipherAndIv = encrypted.slice(65, 65 + 16 + cipherTextLength)
-            const ciphertext = cipherAndIv.slice(16)
-            const msgMac = encrypted.slice(65 + 16 + cipherTextLength)
+  new Promise((resolve, reject) => {
+    if (encrypted.length <= metaLength)
+      reject(new Error(`Invalid Ciphertext. Data is too small. It should ba at least ${metaLength} bytes`))
+    else if (encrypted[0] !== 4)
+      reject(new Error(`Not a valid ciphertext. It should begin with 4 but actually begin with ${encrypted[0]}`))
+    else {
+      // deserialise
+      const ephemPublicKey = encrypted.slice(0, 65)
+      const cipherTextLength = encrypted.length - metaLength
+      const iv = encrypted.slice(65, 65 + 16)
+      const cipherAndIv = encrypted.slice(65, 65 + 16 + cipherTextLength)
+      const ciphertext = cipherAndIv.slice(16)
+      const msgMac = encrypted.slice(65 + 16 + cipherTextLength)
 
-            // check HMAC
-            resolve(derive(privateKey, ephemPublicKey)
-              .then(px => kdf(px, 32))
-              .then(hash => sha256(hash.slice(16)).then(macKey => [hash.slice(0, 16), macKey]))
-              .then(([encryptionKey, macKey]) => 
-                hmacSha256Verify(macKey, cipherAndIv, msgMac)
-                  .then(isHmacGood => !isHmacGood
-                    ? Promise.reject(new Error('Incorrect MAC'))
-                    : aesCtrDecrypt(iv, encryptionKey, ciphertext)
-                  )
-              ).then(Buffer.from))
-        }
-    })
+      // check HMAC
+      resolve(derive(privateKey, ephemPublicKey)
+        .then(px => kdf(px, 32))
+        .then(hash => sha256(hash.slice(16)).then(macKey => [hash.slice(0, 16), macKey]))
+        .then(([encryptionKey, macKey]) =>
+          hmacSha256Verify(macKey, cipherAndIv, msgMac)
+            .then(isHmacGood => !isHmacGood
+              ? Promise.reject(new Error('Incorrect MAC'))
+              : aesCtrDecrypt(iv, encryptionKey, ciphertext)
+            )
+        ).then(Buffer.from))
+    }
+  })
