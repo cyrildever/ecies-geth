@@ -1,6 +1,9 @@
 # ecies-geth
 
+![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/edgewhere/ecies-geth)
 ![npm](https://img.shields.io/npm/dw/ecies-geth)
+![GitHub last commit](https://img.shields.io/github/last-commit/edgewhere/ecies-geth)
+![GitHub issues](https://img.shields.io/github/issues/edgewhere/ecies-geth)
 ![GitHub](https://img.shields.io/github/license/edgewhere/ecies-geth)
 
 This is a JavaScript Elliptic Curve Integrated Encryption Scheme (ECIES) library for use in both Browser and NodeJS apps.
