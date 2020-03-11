@@ -4,7 +4,7 @@
 ![npm](https://img.shields.io/npm/dw/ecies-geth)
 ![GitHub last commit](https://img.shields.io/github/last-commit/edgewhere/ecies-geth)
 ![GitHub issues](https://img.shields.io/github/issues/edgewhere/ecies-geth)
-![GitHub](https://img.shields.io/github/license/edgewhere/ecies-geth)
+![NPM](https://img.shields.io/npm/l/ecies-geth)
 
 This is a JavaScript Elliptic Curve Integrated Encryption Scheme (ECIES) library for use in both Browser and NodeJS apps.
 This module is a modified version of the [`eccrypto`](https://github.com/bitchan/eccrypto) JavaScript library.
