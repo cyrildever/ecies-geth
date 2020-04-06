@@ -1,13 +1,13 @@
 {
   "name": "ecies-geth",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "JavaScript Elliptic Curve Integrated Encryption Scheme (ECIES) Library - Based off Geth's implementation",
   "main": "dist/lib/src/typescript/index.js",
   "types": "index.d.ts",
   "browser": "dist/lib/src/typescript/browser.js",
   "scripts": {
     "build": "tsc",
-    "test": "tsc && mocha 'test/src/typescript/node.specs.ts' --require ts-node/register && browserify ./dist/test/src/typescript/browser.specs.js -o dist/test/src/typescript/index.js && live-server --port=9001 --mount=/:test/src/typescript"
+    "test": "tsc && mocha 'test/src/typescript/node.spec.ts' --require ts-node/register && browserify ./dist/test/src/typescript/browser.spec.js -o dist/test/src/typescript/index.js && live-server --port=9001 --mount=/:test/src/typescript"
   },
   "repository": {
     "type": "git",
