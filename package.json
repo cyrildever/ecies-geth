@@ -1,12 +1,14 @@
 {
   "name": "ecies-geth",
-  "version": "1.0.5",
+  "version": "1.1.0",
   "description": "JavaScript Elliptic Curve Integrated Encryption Scheme (ECIES) Library - Based off Geth's implementation",
   "main": "dist/lib/src/typescript/index.js",
   "types": "index.d.ts",
   "browser": "dist/lib/src/typescript/browser.js",
   "scripts": {
     "build": "tsc",
+    "test-browser": "tsc && browserify ./dist/test/src/typescript/browser.spec.js -o dist/test/src/typescript/index.js && live-server --port=9001 --mount=/:test/src/typescript",
+    "test-node": "tsc && mocha 'test/src/typescript/node.spec.ts' --require ts-node/register",
     "test": "tsc && mocha 'test/src/typescript/node.spec.ts' --require ts-node/register && browserify ./dist/test/src/typescript/browser.spec.js -o dist/test/src/typescript/index.js && live-server --port=9001 --mount=/:test/src/typescript"
   },
   "repository": {
@@ -36,14 +38,14 @@
     "@types/chai-as-promised": "^7.1.2",
     "@types/elliptic": "^6.4.12",
     "@types/mocha": "^5.2.7",
-    "@types/node": "^12.12.29",
+    "@types/node": "^12.12.39",
     "browserify": "^16.5.0",
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
     "live-server": "^1.2.1",
     "mocha": "^6.2.2",
-    "ts-node": "^8.6.2",
-    "typescript": "^3.8.3"
+    "ts-node": "^8.10.1",
+    "typescript": "^3.9.2"
   },
   "dependencies": {
     "elliptic": "^6.5.2"

@@ -115,11 +115,10 @@ export const sign = (privateKey: Buffer, msg: Buffer): Promise<Buffer> =>
       reject(new Error('Private key should be 32 bytes long'))
     else if (msg.length <= 0)
       reject(new Error('Message should not be empty'))
-    else if (msg.length >= 32)
+    else if (msg.length > 32)
       reject(new Error('Message is too long (max 32 bytes)'))
     else {
       const padded = pad32(msg)
-      //const signed = secp256k1.sign(padded, privateKey).signature
       const signed = secp256k1.sign(padded, privateKey).signature
       resolve(Buffer.from(secp256k1.signatureExport(signed)))
     }
@@ -139,7 +138,7 @@ export const verify = (publicKey: Buffer, msg: Buffer, sig: Buffer): Promise<nul
       reject(new Error('Public key should 65 bytes long'))
     else if (msg.length <= 0)
       reject(new Error('Message should not be empty'))
-    else if (msg.length >= 32)
+    else if (msg.length > 32)
       reject(new Error('Message is too long (max 32 bytes)'))
     else {
       const passed = pad32(msg)
