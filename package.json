@@ -1,6 +1,6 @@
 {
   "name": "ecies-geth",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "JavaScript Elliptic Curve Integrated Encryption Scheme (ECIES) Library - Based off Geth's implementation",
   "main": "dist/lib/src/typescript/index.js",
   "types": "index.d.ts",
@@ -13,7 +13,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/edgewhere/ecies-geth.git"
+    "url": "git+https://github.com/cyrildever/ecies-geth.git"
   },
   "keywords": [
     "ecies",
@@ -27,12 +27,12 @@
     "ecdh",
     "go-ethereum"
   ],
-  "author": "Edgewhere <cdever@edgewhere.fr>",
+  "author": "Cyril Dever <cdever@edgewhere.fr>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/edgewhere/ecies-geth/issues"
+    "url": "https://github.com/cyrildever/ecies-geth/issues"
   },
-  "homepage": "https://github.com/edgewhere/ecies-geth#readme",
+  "homepage": "https://github.com/cyrildever/ecies-geth#readme",
   "devDependencies": {
     "@types/chai": "^4.2.10",
     "@types/chai-as-promised": "^7.1.2",
@@ -45,12 +45,15 @@
     "live-server": "^1.2.1",
     "mocha": "^6.2.2",
     "ts-node": "^8.10.1",
-    "typescript": "^3.9.2"
+    "typescript": "~3.9.2"
   },
   "dependencies": {
     "elliptic": "^6.5.2"
   },
   "optionalDependencies": {
     "secp256k1": "^3.8.0"
+  },
+  "resolutions": {
+    "websocket-extensions": "0.1.4"
   }
 }

@@ -1,7 +1,8 @@
 /*
+
 MIT License
 
-Copyright (c) 2019 Edgewhere
+Copyright (c) 2019 Cyril Dever
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -25,11 +26,11 @@ SOFTWARE.
 
 /**
  * Browser ecies-geth implementation.
- * This is based off the eccrypto js module.
+ * This is based off the `eccrypto` JS module.
  */
 import { ec as EC } from 'elliptic'
 
-//IE 11
+// IE 11
 declare global {
   interface Window {
     msCrypto?: Crypto
@@ -43,9 +44,8 @@ const ec = new EC('secp256k1')
 const crypto = window.crypto || window.msCrypto!
 const subtle: SubtleCrypto = (crypto.subtle || crypto.webkitSubtle)!
 
-if (subtle === undefined || crypto === undefined) //TODO maybe better ?
-  //throw new Error('crypto and/or subtle api unavailable')
-  console.error('crypto and/or subtle api unavailable')
+if (subtle === undefined || crypto === undefined)
+  throw new Error('crypto and/or subtle api unavailable')
 
 // Use the browser RNG
 const randomBytes = (size: number): Buffer =>

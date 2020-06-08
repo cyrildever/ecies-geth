@@ -1,4 +1,4 @@
-type ECIES = typeof import('../../..') //only import type from the node
+type ECIES = typeof import('../../..') // only import types from the node
 const ecies = require('../../../lib/src/typescript/index') as ECIES
 
 const chaiAsPromised = require("chai-as-promised");

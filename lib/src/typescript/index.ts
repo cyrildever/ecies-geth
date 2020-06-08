@@ -2,7 +2,7 @@
 
 MIT License
 
-Copyright (c) 2019 Edgewhere
+Copyright (c) 2019 Cyril Dever
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -23,7 +23,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 */
-import { } from './node' //type definitions
+import { } from './node' // type definitions
 
 // try to use secp256k1, fallback to browser implementation
 try {

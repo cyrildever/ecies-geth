@@ -5,7 +5,7 @@ chai.use(chaiAsPromised)
 chai.should()
 const expect = chai.expect
 
-type ECIES = typeof import('../../..') //only import type from the node
+type ECIES = typeof import('../../..') // only import types from the node
 const ecies = require('../../..') as ECIES
 
 describe('ecies', () => {
