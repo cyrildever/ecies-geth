@@ -1,5 +1,4 @@
 /*
-
 MIT License
 
 Copyright (c) 2019 Cyril Dever
@@ -21,7 +20,6 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-
 */
 
 /**
@@ -40,9 +38,13 @@ declare global {
   }
 }
 
+/* eslint-disable @typescript-eslint/unbound-method */
+
 const ec = new EC('secp256k1')
-const crypto = window.crypto || window.msCrypto!
-const subtle: SubtleCrypto = (crypto.subtle || crypto.webkitSubtle)!
+/* eslint-disable @typescript-eslint/strict-boolean-expressions */
+const crypto = window.crypto || window.msCrypto! // eslint-disable-line @typescript-eslint/no-non-null-assertion
+const subtle: SubtleCrypto = (crypto.subtle || crypto.webkitSubtle)! // eslint-disable-line @typescript-eslint/no-non-null-assertion
+/* eslint-enable @typescript-eslint/strict-boolean-expressions */
 
 if (subtle === undefined || crypto === undefined)
   throw new Error('crypto and/or subtle api unavailable')
@@ -53,14 +55,14 @@ const randomBytes = (size: number): Buffer =>
 
 // Get the browser SHA256 implementation
 const sha256 = (msg: Int8Array | Int16Array | Int32Array | Uint8Array | Uint16Array | Uint32Array | Uint8ClampedArray | Float32Array | Float64Array | DataView | ArrayBuffer): Promise<Buffer> =>
-  subtle.digest({ name: "SHA-256" }, msg).then(Buffer.from) as Promise<Buffer>
+  subtle.digest({ name: 'SHA-256' }, msg).then(Buffer.from) as Promise<Buffer>
 
 // The KDF as implemented in Parity mimics Geth's implementation
 export const kdf = (secret: Buffer, outputLength: number): Promise<Buffer> => {
   let ctr = 1
   let written = 0
   let willBeResult = Promise.resolve(Buffer.from(''))
-  while (written < outputLength) {
+  while (written < outputLength) { // eslint-disable-line no-loops/no-loops
     const ctrs = Buffer.from([ctr >> 24, ctr >> 16, ctr >> 8, ctr])
     const willBeHashResult = sha256(Buffer.concat([ctrs, secret]))
     willBeResult = willBeResult.then(result => willBeHashResult.then(hashResult =>
@@ -69,7 +71,7 @@ export const kdf = (secret: Buffer, outputLength: number): Promise<Buffer> => {
     written += 32
     ctr += 1
   }
-  return willBeResult;
+  return willBeResult
 }
 
 const aesCtrEncrypt = (
@@ -98,8 +100,8 @@ const hmacSha256Sign = (
   key: Int8Array | Int16Array | Int32Array | Uint8Array | Uint16Array | Uint32Array | Uint8ClampedArray | Float32Array | Float64Array | DataView | ArrayBuffer,
   msg: Int8Array | Int16Array | Int32Array | Uint8Array | Uint16Array | Uint32Array | Uint8ClampedArray | Float32Array | Float64Array | DataView | ArrayBuffer
 ): PromiseLike<Buffer> => {
-  const algorithm = { name: "HMAC", hash: { name: "SHA-256" } }
-  return subtle.importKey("raw", key, algorithm, false, ["sign"])
+  const algorithm = { name: 'HMAC', hash: { name: 'SHA-256' } }
+  return subtle.importKey('raw', key, algorithm, false, ['sign'])
     .then(cryptoKey => subtle.sign(algorithm, cryptoKey, msg))
     .then(Buffer.from)
 }
@@ -107,10 +109,10 @@ const hmacSha256Sign = (
 const hmacSha256Verify = (
   key: Int8Array | Int16Array | Int32Array | Uint8Array | Uint16Array | Uint32Array | Uint8ClampedArray | Float32Array | Float64Array | DataView | ArrayBuffer,
   msg: Int8Array | Int16Array | Int32Array | Uint8Array | Uint16Array | Uint32Array | Uint8ClampedArray | Float32Array | Float64Array | DataView | ArrayBuffer,
-  sig: Int8Array | Int16Array | Int32Array | Uint8Array | Uint16Array | Uint32Array | Uint8ClampedArray | Float32Array | Float64Array | DataView | ArrayBuffer,
+  sig: Int8Array | Int16Array | Int32Array | Uint8Array | Uint16Array | Uint32Array | Uint8ClampedArray | Float32Array | Float64Array | DataView | ArrayBuffer
 ): Promise<boolean> => {
-  const algorithm = { name: "HMAC", hash: { name: "SHA-256" } }
-  const keyp = subtle.importKey("raw", key, algorithm, false, ["verify"])
+  const algorithm = { name: 'HMAC', hash: { name: 'SHA-256' } }
+  const keyp = subtle.importKey('raw', key, algorithm, false, ['verify'])
   return keyp.then(cryptoKey => subtle.verify(algorithm, cryptoKey, sig, msg)) as Promise<boolean>
 }
 
@@ -183,7 +185,7 @@ export const derive = (privateKeyA: Buffer, publicKeyB: Buffer): Promise<Buffer>
     else if (publicKeyB.length !== 65)
       reject(new Error(`Bad public key, it should be 65 bytes but it's actually ${publicKeyB.length} bytes long`))
     else if (publicKeyB[0] !== 4)
-      reject(new Error(`Bad public key, a valid public key would begin with 4`))
+      reject(new Error('Bad public key, a valid public key would begin with 4'))
     else {
       const keyA = ec.keyFromPrivate(privateKeyA)
       const keyB = ec.keyFromPublic(publicKeyB)
@@ -200,13 +202,14 @@ export const derive = (privateKeyA: Buffer, publicKeyB: Buffer): Promise<Buffer>
  * @param {?{?iv: Buffer, ?ephemPrivateKey: Buffer}} opts - You may also specify initialization vector (16 bytes) and ephemeral private key (32 bytes) to get deterministic results.
  * @return {Promise.<Buffer>} - A promise that resolves with the ECIES structure serialized
  */
-export const encrypt = (publicKeyTo: Buffer, msg: Buffer, opts?: { iv?: Buffer, ephemPrivateKey?: Buffer }): Promise<Buffer> => {
+export const encrypt = async (publicKeyTo: Buffer, msg: Buffer, opts?: { iv?: Buffer; ephemPrivateKey?: Buffer }): Promise<Buffer> => {
+  /* eslint-disable @typescript-eslint/strict-boolean-expressions */
   opts = opts || {}
   const ephemPrivateKey = opts.ephemPrivateKey || randomBytes(32)
   return derive(ephemPrivateKey, publicKeyTo)
     .then(sharedPx => kdf(sharedPx, 32))
-    .then(hash => {
-      const iv = opts!.iv || randomBytes(16)
+    .then(async hash => {
+      const iv = opts!.iv || randomBytes(16) // eslint-disable-line @typescript-eslint/no-non-null-assertion
       const encryptionKey = hash.slice(0, 16)
       return aesCtrEncrypt(iv, encryptionKey, msg)
         .then(cipherText => Buffer.concat([iv, cipherText]))
@@ -219,6 +222,7 @@ export const encrypt = (publicKeyTo: Buffer, msg: Buffer, opts?: { iv?: Buffer, 
             )
         )
     })
+  /* eslint-enable @typescript-eslint/strict-boolean-expressions */
 }
 
 const metaLength = 1 + 64 + 16 + 32
@@ -237,7 +241,7 @@ export const decrypt = (privateKey: Buffer, encrypted: Buffer): Promise<Buffer> 
     else if (encrypted[0] !== 4)
       reject(new Error(`Not a valid ciphertext. It should begin with 4 but actually begin with ${encrypted[0]}`))
     else {
-      // deserialise
+      // deserialize
       const ephemPublicKey = encrypted.slice(0, 65)
       const cipherTextLength = encrypted.length - metaLength
       const iv = encrypted.slice(65, 65 + 16)
@@ -258,3 +262,5 @@ export const decrypt = (privateKey: Buffer, encrypted: Buffer): Promise<Buffer> 
         ).then(Buffer.from))
     }
   })
+
+/* eslint-enable @typescript-eslint/unbound-method */

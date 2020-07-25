@@ -1,5 +1,4 @@
 /*
-
 MIT License
 
 Copyright (c) 2019 Cyril Dever
@@ -21,35 +20,34 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-
 */
 
 /**
  * Note: This module is based off the original eccrypto module.
  */
 import { createHash, BinaryLike, createCipheriv, createDecipheriv, createHmac, randomBytes } from 'crypto'
-const secp256k1 = require('secp256k1')
+const secp256k1 = require('secp256k1') // eslint-disable-line @typescript-eslint/no-var-requires
 import { ec as EC } from 'elliptic'
 
 const ec = new EC('secp256k1')
 
 const sha256 = (msg: BinaryLike): Buffer =>
-  createHash("sha256").update(msg).digest()
+  createHash('sha256').update(msg).digest()
 
 const hmacSha256 = (key: BinaryLike, msg: BinaryLike): Buffer =>
-  createHmac("sha256", key).update(msg).digest()
+  createHmac('sha256', key).update(msg).digest()
 
 const aes128CtrEncrypt = (iv: Buffer, key: Buffer, plaintext: Buffer): Buffer => {
-  const cipher = createCipheriv("aes-128-ctr", key, iv)
+  const cipher = createCipheriv('aes-128-ctr', key, iv)
   const firstChunk = cipher.update(plaintext)
   const secondChunk = cipher.final()
   return Buffer.concat([iv, firstChunk, secondChunk])
 }
 
 const aes128CtrDecrypt = (iv: Buffer, key: Buffer, ciphertext: Buffer): Buffer => {
-  var cipher = createDecipheriv("aes-128-ctr", key, iv)
-  var firstChunk = cipher.update(ciphertext)
-  var secondChunk = cipher.final()
+  const cipher = createDecipheriv('aes-128-ctr', key, iv)
+  const firstChunk = cipher.update(ciphertext)
+  const secondChunk = cipher.final()
   return Buffer.concat([firstChunk, secondChunk])
 }
 
@@ -59,7 +57,7 @@ const equalConstTime = (b1: Buffer, b2: Buffer): boolean => {
     return false
   }
   let res = 0
-  for (let i = 0; i < b1.length; i++) {
+  for (let i = 0; i < b1.length; i++) { // eslint-disable-line no-loops/no-loops
     res |= b1[i] ^ b2[i]
   }
   return res === 0
@@ -79,7 +77,7 @@ export const kdf = function (secret: Buffer, outputLength: number): Promise<Buff
     let ctr = 1
     let written = 0
     let result = Buffer.from('')
-    while (written < outputLength) {
+    while (written < outputLength) { // eslint-disable-line no-loops/no-loops
       const ctrs = Buffer.from([ctr >> 24, ctr >> 16, ctr >> 8, ctr])
       const hashResult = sha256(Buffer.concat([ctrs, secret]))
       result = Buffer.concat([result, hashResult])
@@ -145,7 +143,7 @@ export const verify = (publicKey: Buffer, msg: Buffer, sig: Buffer): Promise<nul
       const passed = pad32(msg)
       const signed = secp256k1.signatureImport(sig)
 
-      if (secp256k1.verify(passed, signed, publicKey)) {
+      if (secp256k1.verify(passed, signed, publicKey)) { // eslint-disable-line @typescript-eslint/strict-boolean-expressions
         resolve(null)
       } else {
         reject(new Error('Bad signature'))
@@ -167,7 +165,7 @@ export const derive = (privateKey: Buffer, publicKey: Buffer): Promise<Buffer> =
     else if (publicKey.length !== 65)
       reject(new Error(`Bad public key, it should be 65 bytes but it's actually ${publicKey.length} bytes long`))
     else if (publicKey[0] !== 4)
-      reject(new Error(`Bad public key, a valid public key would begin with 4`))
+      reject(new Error('Bad public key, a valid public key would begin with 4'))
     else {
       const keyA = ec.keyFromPrivate(privateKey)
       const keyB = ec.keyFromPublic(publicKey)
@@ -184,14 +182,15 @@ export const derive = (privateKey: Buffer, publicKey: Buffer): Promise<Buffer> =
  * @param {?{?iv: Buffer, ?ephemPrivateKey: Buffer}} opts - You may also specify initialization vector (16 bytes) and ephemeral private key (32 bytes) to get deterministic results.
  * @return {Promise.<Buffer>} - A promise that resolves with the ECIES structure serialized
  */
-export const encrypt = (publicKeyTo: Buffer, msg: Buffer, opts?: { iv?: Buffer, ephemPrivateKey?: Buffer }): Promise<Buffer> => {
+export const encrypt = async (publicKeyTo: Buffer, msg: Buffer, opts?: { iv?: Buffer; ephemPrivateKey?: Buffer }): Promise<Buffer> => {
+  /* eslint-disable @typescript-eslint/strict-boolean-expressions */
   opts = opts || {}
   const ephemPrivateKey = opts.ephemPrivateKey || randomBytes(32)
   return derive(ephemPrivateKey, publicKeyTo)
     .then(sharedPx => kdf(sharedPx, 32))
     .then(hash => {
       const encryptionKey = hash.slice(0, 16)
-      const iv = opts!.iv || randomBytes(16)
+      const iv = opts!.iv || randomBytes(16) // eslint-disable-line @typescript-eslint/no-non-null-assertion
       const macKey = sha256(hash.slice(16))
       const cipherText = aes128CtrEncrypt(iv, encryptionKey, msg)
       const HMAC = hmacSha256(macKey, cipherText)
@@ -199,6 +198,7 @@ export const encrypt = (publicKeyTo: Buffer, msg: Buffer, opts?: { iv?: Buffer, 
         Buffer.concat([ephemPublicKey, cipherText, HMAC])
       )
     })
+  /* eslint-enable @typescript-eslint/strict-boolean-expressions */
 }
 
 const metaLength = 1 + 64 + 16 + 32

@@ -1,7 +1,7 @@
 type ECIES = typeof import('../../..') // only import types from the node
 const ecies = require('../../../lib/src/typescript/index') as ECIES
 
-const chaiAsPromised = require("chai-as-promised");
+import chaiAsPromised from 'chai-as-promised'
 chai.use(chaiAsPromised)
 
 declare function expect(val: any, message?: string): any
@@ -206,7 +206,7 @@ describe('ecies', () => {
       const smallerPub = Buffer.from('03e315a987bd79b9f49d3a1c8bd1ef5a401a242820d52a3f22505da81dfcd992cc5c6e2ae9bc0754856ca68652516551d46121daa37afc609036ab5754fe7a82a3', 'hex')
       const found = ecies.derive(secret, smallerPub)
 
-      return expect(found).to.be.rejectedWith(`Bad public key, a valid public key would begin with 4`)
+      return expect(found).to.be.rejectedWith('Bad public key, a valid public key would begin with 4')
     })
     it('should derive a new shared secret', async () => {
       const secret = Buffer.from('b9fc3b425d6c1745b9c963c97e6e1d4c1db7a093a36e0cf7c0bf85dc1130b8a0', 'hex')
@@ -244,7 +244,7 @@ describe('ecies', () => {
       const msg = Buffer.from('ROOOT')
       const found = ecies.encrypt(smallerPub, msg)
 
-      return expect(found).to.be.rejectedWith(`Bad public key, a valid public key would begin with 4`)
+      return expect(found).to.be.rejectedWith('Bad public key, a valid public key would begin with 4')
     })
     it('should accept a opts.ephemPrivateKey of 32 bytes', () => {
       const secret = Buffer.from('b9fc3b425d6c1745b9c963c97e6e1d4c1db7a093a36e0cf7c0bf85dc1130b8a0', 'hex')
@@ -307,14 +307,14 @@ describe('ecies', () => {
       const encryptedWithFalsePublicKey = Buffer.from('031891f11182f69dfd67dc190ccd649445182c6474f69c9f3885c99733b056fb53e1a30b90b6d2a2624449fda885adcba50334024b20081b07f95f3cc92a93dbedccf75890cd7ac088b0810058c272ef25a4028875342c5dfc36b54f156cd26b69109625e5374bc689c79196d98ccc9ad5b7099e6484', 'hex')
       const found = ecies.decrypt(secret, encryptedWithFalsePublicKey)
 
-      return expect(found).to.be.rejectedWith(`Not a valid ciphertext. It should begin with 4 but actually begin with 3`)
+      return expect(found).to.be.rejectedWith('Not a valid ciphertext. It should begin with 4 but actually begin with 3')
     })
     it(`should NOT accept an encrypted msg smaller than ${metaLength} bytes`, () => {
       const secret = Buffer.from('b9fc3b425d6c1745b9c963c97e6e1d4c1db7a093a36e0cf7c0bf85dc1130b8a0', 'hex')
       const smallerEncrypted = Buffer.from('041891f11182f69dfd67dc190c1a30b90b6d2a2624449fda885adcba50334024b20081b07f95f3cc92a93dbedccf75890cd7ac088b0810058c272ef25a4028875342c5dfc36b54f156cd26b69109625e5374bc689c79196d98ccc9ad5b7099e6484', 'hex')
       const found = ecies.decrypt(secret, smallerEncrypted)
 
-      return expect(found).to.be.rejectedWith(`Invalid Ciphertext. Data is too small. It should ba at least 113 bytes`)
+      return expect(found).to.be.rejectedWith('Invalid Ciphertext. Data is too small. It should ba at least 113 bytes')
     })
   })
   describe('encrypt and decrypt', () => {

@@ -1,15 +1,17 @@
 {
   "name": "ecies-geth",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "JavaScript Elliptic Curve Integrated Encryption Scheme (ECIES) Library - Based off Geth's implementation",
   "main": "dist/lib/src/typescript/index.js",
   "types": "index.d.ts",
   "browser": "dist/lib/src/typescript/browser.js",
   "scripts": {
-    "build": "tsc",
+    "build": "eslint lib --ext .ts && tsc",
+    "fix": "eslint lib --ext .ts --fix",
     "test-browser": "tsc && browserify ./dist/test/src/typescript/browser.spec.js -o dist/test/src/typescript/index.js && live-server --port=9001 --mount=/:test/src/typescript",
     "test-node": "tsc && mocha 'test/src/typescript/node.spec.ts' --require ts-node/register",
-    "test": "tsc && mocha 'test/src/typescript/node.spec.ts' --require ts-node/register && browserify ./dist/test/src/typescript/browser.spec.js -o dist/test/src/typescript/index.js && live-server --port=9001 --mount=/:test/src/typescript"
+    "test": "tsc && mocha 'test/src/typescript/node.spec.ts' --require ts-node/register && browserify ./dist/test/src/typescript/browser.spec.js -o dist/test/src/typescript/index.js && live-server --port=9001 --mount=/:test/src/typescript",
+    "fix-test": "eslint test --ext .ts --fix"
   },
   "repository": {
     "type": "git",
@@ -39,9 +41,15 @@
     "@types/elliptic": "^6.4.12",
     "@types/mocha": "^5.2.7",
     "@types/node": "^12.12.39",
+    "@typescript-eslint/eslint-plugin": "~2.30.0",
+    "@typescript-eslint/parser": "~2.30.0",
     "browserify": "^16.5.0",
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
+    "eslint": "~6.8.0",
+    "eslint-plugin-immutable": "~1.0.0",
+    "eslint-plugin-import": "~2.20.2",
+    "eslint-plugin-no-loops": "~0.3.0",
     "live-server": "^1.2.1",
     "mocha": "^8.0.1",
     "ts-node": "^8.10.1",

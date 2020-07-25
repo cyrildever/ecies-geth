@@ -1,5 +1,4 @@
 /*
-
 MIT License
 
 Copyright (c) 2019 Cyril Dever
@@ -21,17 +20,17 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-
 */
+
 import { } from './node' // type definitions
 
 // try to use secp256k1, fallback to browser implementation
 try {
-  module.exports = require("./node")
+  module.exports = require('./node')
 } catch (e) {
-  if (process.env.ECCRYPTO_NO_FALLBACK) {
+  if (process.env.ECCRYPTO_NO_FALLBACK) { // eslint-disable-line @typescript-eslint/strict-boolean-expressions
     throw e
   } else {
-    module.exports = require("./browser")
+    module.exports = require('./browser')
   }
 }
