@@ -1,6 +1,6 @@
 {
   "name": "ecies-geth",
-  "version": "1.2.3",
+  "version": "1.2.4",
   "description": "JavaScript Elliptic Curve Integrated Encryption Scheme (ECIES) Library - Based off Geth's implementation",
   "main": "dist/lib/src/typescript/index.js",
   "types": "index.d.ts",
@@ -51,7 +51,7 @@
     "eslint-plugin-import": "~2.20.2",
     "eslint-plugin-no-loops": "~0.3.0",
     "live-server": "^1.2.1",
-    "mocha": "^8.0.1",
+    "mocha": "^8.1.1",
     "ts-node": "^8.10.1",
     "typescript": "~3.9.2"
   },
