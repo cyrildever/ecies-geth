@@ -21,9 +21,9 @@ We needed to have a JavaScript library fully compliant with the way the Go Ether
 As with `eccrypto`, this library provides two implementations for Browser and NodeJS with the same API.
 
 The ECIES implementation details mimic those introduced by both Geth and Parity, which are:
-* Implements a SHA-256 Key Derivation Function (KDF);
+* Implements a __SHA-256__ Key Derivation Function (KDF);
 * ECDH based only on the `secp256k1` curve (to match common blockchain transaction signing);
-* Uses AES-128-CTR based symmetric encryption (with a 128-bit shared key derived from ECDH).
+* Uses __AES-128-CTR__ based symmetric encryption (with a 128-bit shared key derived from ECDH).
 
 #### Cryptography Warning
 
