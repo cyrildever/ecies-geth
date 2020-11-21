@@ -8,7 +8,7 @@
 
 This is a JavaScript Elliptic Curve Integrated Encryption Scheme (ECIES) library for use in both Browser and NodeJS apps.
 This module is a modified version of the [`eccrypto`](https://github.com/bitchan/eccrypto) JavaScript library.
-It's also based off Geth's implementation for Go.
+It's also based off Geth's implementation (Ethereum's `ecies` Go module).
 
 ### Motivation
 
@@ -27,7 +27,7 @@ The ECIES implementation details mimic those introduced by both Geth and Parity,
 
 #### Cryptography Warning
 
-The ECIES implementation given here is solely based off Geth's and Parity's implementations. This module offers no guarantee as to the security or validity of the implementation. Furthermore, this project is being actively developed and as such should not be used for highly sensitive informations.
+The ECIES implementation given here is solely based off Geth's and Parity's implementations. This module offers no guarantee as to the security or validity of the implementation. Furthermore, this project is being actively developed and as such should not be used for highly sensitive informations without further investigation on its robustness.
 
 
 ### Usage
@@ -111,7 +111,7 @@ ecies.derive(privateKeyA, publicKeyB).then(function(sharedKey1) {
 
 ### Credits
 
-Thanks to [@Methrat0n](https://github.com/Methrat0n/) for the initial adaptation.
+Thanks to [@Methrat0n](https://github.com/Methrat0n/) for the initial work on this adaptation.
 
 
 ### License

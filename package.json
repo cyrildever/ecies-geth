@@ -1,12 +1,12 @@
 {
   "name": "ecies-geth",
-  "version": "1.2.4",
+  "version": "1.2.5",
   "description": "JavaScript Elliptic Curve Integrated Encryption Scheme (ECIES) Library - Based off Geth's implementation",
   "main": "dist/lib/src/typescript/index.js",
   "types": "index.d.ts",
   "browser": "dist/lib/src/typescript/browser.js",
   "scripts": {
-    "build": "eslint lib --ext .ts && tsc",
+    "compile": "eslint lib --ext .ts && tsc",
     "fix": "eslint lib --ext .ts --fix",
     "test-browser": "tsc && browserify ./dist/test/src/typescript/browser.spec.js -o dist/test/src/typescript/index.js && live-server --port=9001 --mount=/:test/src/typescript",
     "test-node": "tsc && mocha 'test/src/typescript/node.spec.ts' --require ts-node/register",
@@ -40,7 +40,7 @@
     "@types/chai-as-promised": "^7.1.3",
     "@types/elliptic": "^6.4.12",
     "@types/mocha": "^5.2.7",
-    "@types/node": "^12.19.4",
+    "@types/node": "^12.19.6",
     "@typescript-eslint/eslint-plugin": "~2.30.0",
     "@typescript-eslint/parser": "~2.30.0",
     "browserify": "^16.5.2",
