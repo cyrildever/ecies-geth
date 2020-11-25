@@ -188,7 +188,7 @@ export const encrypt = async (publicKeyTo: Buffer, msg: Buffer, opts?: { iv?: Bu
   const ephemPrivateKey = opts.ephemPrivateKey || randomBytes(32)
   return derive(ephemPrivateKey, publicKeyTo)
     .then(sharedPx => kdf(sharedPx, 32))
-    .then(hash => {
+    .then(async hash => {
       const encryptionKey = hash.slice(0, 16)
       const iv = opts!.iv || randomBytes(16) // eslint-disable-line @typescript-eslint/no-non-null-assertion
       const macKey = sha256(hash.slice(16))
