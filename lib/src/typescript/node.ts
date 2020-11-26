@@ -26,9 +26,9 @@ SOFTWARE.
  * Note: This module is based off the original eccrypto module.
  */
 import { createHash, BinaryLike, createCipheriv, createDecipheriv, createHmac, randomBytes } from 'crypto'
-const secp256k1 = require('secp256k1') // eslint-disable-line @typescript-eslint/no-var-requires
 import { ec as EC } from 'elliptic'
 
+const secp256k1 = require('secp256k1') // eslint-disable-line @typescript-eslint/no-var-requires
 const ec = new EC('secp256k1')
 
 const sha256 = (msg: BinaryLike): Buffer =>
@@ -72,21 +72,19 @@ const pad32 = (msg: Buffer): Buffer => {
 }
 
 // The KDF as implemented in Parity mimics Geth's implementation
-export const kdf = function (secret: Buffer, outputLength: number): Promise<Buffer> {
-  return new Promise(resolve => {
-    let ctr = 1
-    let written = 0
-    let result = Buffer.from('')
-    while (written < outputLength) { // eslint-disable-line no-loops/no-loops
-      const ctrs = Buffer.from([ctr >> 24, ctr >> 16, ctr >> 8, ctr])
-      const hashResult = sha256(Buffer.concat([ctrs, secret]))
-      result = Buffer.concat([result, hashResult])
-      written += 32
-      ctr += 1
-    }
-    resolve(result)
-  })
-}
+export const kdf = (secret: Buffer, outputLength: number): Promise<Buffer> => new Promise(resolve => {
+  let ctr = 1
+  let written = 0
+  let result = Buffer.from('')
+  while (written < outputLength) { // eslint-disable-line no-loops/no-loops
+    const ctrs = Buffer.from([ctr >> 24, ctr >> 16, ctr >> 8, ctr])
+    const hashResult = sha256(Buffer.concat([ctrs, secret]))
+    result = Buffer.concat([result, hashResult])
+    written += 32
+    ctr += 1
+  }
+  resolve(result)
+})
 
 /**
  * Compute the public key for a given private key.
@@ -108,20 +106,19 @@ export const getPublic = (privateKey: Buffer): Promise<Buffer> => new Promise((r
  * @param {Buffer} msg - The message being signed, no more than 32 bytes
  * @return {Promise.<Buffer>} A promise that resolves with the signature and rejects on bad key or message.
  */
-export const sign = (privateKey: Buffer, msg: Buffer): Promise<Buffer> =>
-  new Promise((resolve, reject) => {
-    if (privateKey.length !== 32)
-      reject(new Error('Private key should be 32 bytes long'))
-    else if (msg.length <= 0)
-      reject(new Error('Message should not be empty'))
-    else if (msg.length > 32)
-      reject(new Error('Message is too long (max 32 bytes)'))
-    else {
-      const padded = pad32(msg)
-      const signed = secp256k1.sign(padded, privateKey).signature
-      resolve(Buffer.from(secp256k1.signatureExport(signed)))
-    }
-  })
+export const sign = (privateKey: Buffer, msg: Buffer): Promise<Buffer> => new Promise((resolve, reject) => {
+  if (privateKey.length !== 32) {
+    reject(new Error('Private key should be 32 bytes long'))
+  } else if (msg.length <= 0) {
+    reject(new Error('Message should not be empty'))
+  } else if (msg.length > 32) {
+    reject(new Error('Message is too long (max 32 bytes)'))
+  } else {
+    const padded = pad32(msg)
+    const signed = secp256k1.sign(padded, privateKey).signature
+    resolve(Buffer.from(secp256k1.signatureExport(signed)))
+  }
+})
 
 /**
  * Verify an ECDSA signature.
@@ -129,27 +126,26 @@ export const sign = (privateKey: Buffer, msg: Buffer): Promise<Buffer> =>
  * @param {Buffer} publicKey - A 65-byte public key
  * @param {Buffer} msg - The message being verified
  * @param {Buffer} sig - The signature
- * @return {Promise.<null>} A promise that resolves on correct signature and rejects on bad key or signature
+ * @return {Promise.<true>} A promise that resolves on correct signature and rejects on bad key or signature
  */
-export const verify = (publicKey: Buffer, msg: Buffer, sig: Buffer): Promise<null> =>
-  new Promise((resolve, reject) => {
-    if (publicKey.length !== 65)
-      reject(new Error('Public key should 65 bytes long'))
-    else if (msg.length <= 0)
-      reject(new Error('Message should not be empty'))
-    else if (msg.length > 32)
-      reject(new Error('Message is too long (max 32 bytes)'))
-    else {
-      const passed = pad32(msg)
-      const signed = secp256k1.signatureImport(sig)
+export const verify = (publicKey: Buffer, msg: Buffer, sig: Buffer): Promise<true> => new Promise((resolve, reject) => {
+  if (publicKey.length !== 65) {
+    reject(new Error('Public key should 65 bytes long'))
+  } else if (msg.length <= 0) {
+    reject(new Error('Message should not be empty'))
+  } else if (msg.length > 32) {
+    reject(new Error('Message is too long (max 32 bytes)'))
+  } else {
+    const passed = pad32(msg)
+    const signed = secp256k1.signatureImport(sig)
 
-      if (secp256k1.verify(passed, signed, publicKey)) { // eslint-disable-line @typescript-eslint/strict-boolean-expressions
-        resolve(null)
-      } else {
-        reject(new Error('Bad signature'))
-      }
+    if (secp256k1.verify(passed, signed, publicKey)) { // eslint-disable-line @typescript-eslint/strict-boolean-expressions
+      resolve(true)
+    } else {
+      reject(new Error('Bad signature'))
     }
-  })
+  }
+})
 
 /**
  * Derive shared secret for given private and public keys.
@@ -158,21 +154,20 @@ export const verify = (publicKey: Buffer, msg: Buffer, sig: Buffer): Promise<nul
  * @param {Buffer} publicKey - Recipient's public key (65 bytes)
  * @return {Promise.<Buffer>} A promise that resolves with the derived shared secret (Px, 32 bytes) and rejects on bad key
  */
-export const derive = (privateKey: Buffer, publicKey: Buffer): Promise<Buffer> =>
-  new Promise((resolve, reject) => {
-    if (privateKey.length !== 32)
-      reject(new Error(`Bad private key, it should be 32 bytes but it's actually ${privateKey.length} bytes long`))
-    else if (publicKey.length !== 65)
-      reject(new Error(`Bad public key, it should be 65 bytes but it's actually ${publicKey.length} bytes long`))
-    else if (publicKey[0] !== 4)
-      reject(new Error('Bad public key, a valid public key would begin with 4'))
-    else {
-      const keyA = ec.keyFromPrivate(privateKey)
-      const keyB = ec.keyFromPublic(publicKey)
-      const Px = keyA.derive(keyB.getPublic())  // BN instance
-      resolve(Buffer.from(Px.toArray()))
-    }
-  })
+export const derive = (privateKey: Buffer, publicKey: Buffer): Promise<Buffer> => new Promise((resolve, reject) => {
+  if (privateKey.length !== 32) {
+    reject(new Error(`Bad private key, it should be 32 bytes but it's actually ${privateKey.length} bytes long`))
+  } else if (publicKey.length !== 65) {
+    reject(new Error(`Bad public key, it should be 65 bytes but it's actually ${publicKey.length} bytes long`))
+  } else if (publicKey[0] !== 4) {
+    reject(new Error('Bad public key, a valid public key would begin with 4'))
+  } else {
+    const keyA = ec.keyFromPrivate(privateKey)
+    const keyB = ec.keyFromPublic(publicKey)
+    const Px = keyA.derive(keyB.getPublic()) // BN instance
+    resolve(Buffer.from(Px.toArray()))
+  }
+})
 
 /**
  * Encrypt message for given recepient's public key.
@@ -211,12 +206,12 @@ const metaLength = 1 + 64 + 16 + 32
  * @return {Promise.<Buffer>} - A promise that resolves with the plaintext on successful decryption and rejects on failure
  */
 export const decrypt = (privateKey: Buffer, encrypted: Buffer): Promise<Buffer> => new Promise((resolve, reject) => {
-  if (encrypted.length < metaLength)
+  if (encrypted.length < metaLength) {
     reject(new Error(`Invalid Ciphertext. Data is too small. It should ba at least ${metaLength}`))
-  else if (encrypted[0] !== 4)
+  } else if (encrypted[0] !== 4) {
     reject(new Error(`Not a valid ciphertext. It should begin with 4 but actually begin with ${encrypted[0]}`))
-  else {
-    // deserialise
+  } else {
+    // deserialize
     const ephemPublicKey = encrypted.slice(0, 65)
     const cipherTextLength = encrypted.length - metaLength
     const iv = encrypted.slice(65, 65 + 16)
@@ -231,10 +226,9 @@ export const decrypt = (privateKey: Buffer, encrypted: Buffer): Promise<Buffer> 
         const encryptionKey = hash.slice(0, 16)
         const macKey = sha256(hash.slice(16))
         const currentHMAC = hmacSha256(macKey, cipherAndIv)
-
-        if (!equalConstTime(currentHMAC, msgMac))
+        if (!equalConstTime(currentHMAC, msgMac)) {
           return Promise.reject(new Error('Incorrect MAC'))
-
+        }
         // decrypt message
         const plainText = aes128CtrDecrypt(iv, encryptionKey, ciphertext)
         return Buffer.from(new Uint8Array(plainText))

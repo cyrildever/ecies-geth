@@ -1,8 +1,8 @@
-type ECIES = typeof import('../../..') // only import types from the node
-const ecies = require('../../../lib/src/typescript/index') as ECIES
-
 import chaiAsPromised from 'chai-as-promised'
 chai.use(chaiAsPromised)
+
+type ECIES = typeof import('../../..') // only import types from the node
+const ecies = require('../../../lib/src/typescript/index') as ECIES
 
 declare function expect(val: any, message?: string): any
 
@@ -156,13 +156,13 @@ describe('ecies', () => {
 
       return expect(found).to.be.rejectedWith('Bad signature')
     })
-    it('should be resolved with null in case of matching msg and sign', async () => {
+    it('should be resolved with true in case of matching msg and sign', async () => {
       const pub = Buffer.from('04e315a987bd79b9f49d3a1c8bd1ef5a401a242820d52a3f22505da81dfcd992cc5c6e2ae9bc0754856ca68652516551d46121daa37afc609036ab5754fe7a82a3', 'hex')
       const msg = Buffer.from('ROOOT')
       const sign = Buffer.from('30440220150285ea5a92decb327cba6d1065191ba7c28ed1430c0d75aec7cf37e9b2fd6a02200efdb6974ae5e728405f7893d5fc6ed5ce3823fb429119a66e2cdb438dd50233', 'hex')
       const found = await ecies.verify(pub, msg, sign)
 
-      return expect(found).to.be.null
+      return expect(found).to.be.true
     })
   })
   describe('derive', () => {
@@ -348,7 +348,7 @@ describe('ecies', () => {
       const pub = Buffer.from('04e315a987bd79b9f49d3a1c8bd1ef5a401a242820d52a3f22505da81dfcd992cc5c6e2ae9bc0754856ca68652516551d46121daa37afc609036ab5754fe7a82a3', 'hex')
       const found = await ecies.verify(pub, msg, signed)
 
-      return expect(found).to.be.null
+      return expect(found).to.be.true
     })
   })
 })
