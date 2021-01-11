@@ -1,12 +1,11 @@
+import * as ecies from '../../../lib/src/typescript/node'
+
 import * as chai from 'chai'
 import 'mocha'
 import chaiAsPromised from 'chai-as-promised'
 chai.use(chaiAsPromised)
 chai.should()
 const expect = chai.expect
-
-type ECIES = typeof import('../../..') // only import types from the node
-const ecies = require('../../..') as ECIES
 
 describe('ecies', () => {
   describe('kdf', () => {
@@ -66,7 +65,7 @@ describe('ecies', () => {
     })
   })
   describe('sign', () => {
-    it('should accept a 32 bytes buffer as first parameter', () => {
+    it('should accept a 32 bytes buffer as first parameter', async () => {
       const secret = Buffer.from('b9fc3b425d6c1745b9c963c97e6e1d4c1db7a093a36e0cf7c0bf85dc1130b8a0', 'hex')
       const msg = Buffer.alloc(10)
       const found = ecies.sign(secret, msg)

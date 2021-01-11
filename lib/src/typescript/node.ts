@@ -27,8 +27,8 @@ SOFTWARE.
  */
 import { createHash, BinaryLike, createCipheriv, createDecipheriv, createHmac, randomBytes } from 'crypto'
 import { ec as EC } from 'elliptic'
+import secp256k1 from 'secp256k1'
 
-const secp256k1 = require('secp256k1') // eslint-disable-line @typescript-eslint/no-var-requires
 const ec = new EC('secp256k1')
 
 const sha256 = (msg: BinaryLike): Buffer =>
@@ -115,7 +115,7 @@ export const sign = (privateKey: Buffer, msg: Buffer): Promise<Buffer> => new Pr
     reject(new Error('Message is too long (max 32 bytes)'))
   } else {
     const padded = pad32(msg)
-    const signed = secp256k1.sign(padded, privateKey).signature
+    const signed = secp256k1.ecdsaSign(padded, privateKey).signature
     resolve(Buffer.from(secp256k1.signatureExport(signed)))
   }
 })
@@ -138,8 +138,7 @@ export const verify = (publicKey: Buffer, msg: Buffer, sig: Buffer): Promise<tru
   } else {
     const passed = pad32(msg)
     const signed = secp256k1.signatureImport(sig)
-
-    if (secp256k1.verify(passed, signed, publicKey)) { // eslint-disable-line @typescript-eslint/strict-boolean-expressions
+    if (secp256k1.ecdsaVerify(signed, passed, publicKey)) {
       resolve(true)
     } else {
       reject(new Error('Bad signature'))
