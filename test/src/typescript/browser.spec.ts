@@ -164,6 +164,14 @@ describe('ecies', () => {
 
       return expect(found).to.be.true
     })
+    it('should NOT accept any invalid signature', () => {
+      const pub = Buffer.from('04e315a987bd79b9f49d3a1c8bd1ef5a401a242820d52a3f22505da81dfcd992cc5c6e2ae9bc0754856ca68652516551d46121daa37afc609036ab5754fe7a82a3', 'hex')
+      const msg = Buffer.from('ROOOT')
+      const sign = Buffer.from('this-is-not-a-signature')
+      const found = ecies.verify(pub, msg, sign)
+
+      return expect(found).to.be.rejectedWith('Invalid arguments')
+    })
   })
   describe('derive', () => {
     it('should accept a private key 32 bytes long and a public key 65 bytes long', () => {

@@ -137,11 +137,15 @@ export const verify = (publicKey: Buffer, msg: Buffer, sig: Buffer): Promise<tru
     reject(new Error('Message is too long (max 32 bytes)'))
   } else {
     const passed = pad32(msg)
-    const signed = secp256k1.signatureImport(sig)
-    if (secp256k1.ecdsaVerify(signed, passed, publicKey)) {
-      resolve(true)
-    } else {
-      reject(new Error('Bad signature'))
+    try {
+      const signed = secp256k1.signatureImport(sig)
+      if (secp256k1.ecdsaVerify(signed, passed, publicKey)) {
+        resolve(true)
+      } else {
+        reject(new Error('Bad signature'))
+      }
+    } catch (e) {
+      reject(new Error('Invalid signature'))
     }
   }
 })

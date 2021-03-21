@@ -160,16 +160,20 @@ export const sign = (privateKey: Buffer, msg: Buffer): Promise<Buffer> => new Pr
  * @return {Promise.<true>} A promise that resolves on correct signature and rejects on bad key or signature
  */
 export const verify = (publicKey: Buffer, msg: Buffer, sig: Buffer): Promise<true> => new Promise((resolve, reject) => {
-  if (publicKey.length !== 65 || publicKey[0] !== 4) {
-    reject(new Error('Public key should 65 bytes long'))
-  } else if (msg.length <= 0) {
-    reject(new Error('Message should not be empty'))
-  } else if (msg.length > 32) {
-    reject(new Error('Message is too long (max 32 bytes)'))
-  } else if (!ec.verify(msg, sig.toString('hex') as any, publicKey, 'hex')) {
-    reject(new Error('Bad signature'))
-  } else {
-    resolve(true)
+  try {
+    if (publicKey.length !== 65 || publicKey[0] !== 4) {
+      reject(new Error('Public key should 65 bytes long'))
+    } else if (msg.length <= 0) {
+      reject(new Error('Message should not be empty'))
+    } else if (msg.length > 32) {
+      reject(new Error('Message is too long (max 32 bytes)'))
+    } else if (!ec.verify(msg, sig.toString('hex') as any, publicKey, 'hex')) {
+      reject(new Error('Bad signature'))
+    } else {
+      resolve(true)
+    }
+  } catch (e) {
+    reject(new Error('Invalid arguments'))
   }
 })
 
