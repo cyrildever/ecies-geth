@@ -1,6 +1,6 @@
 {
   "name": "ecies-geth",
-  "version": "1.4.2",
+  "version": "1.5.0",
   "description": "JavaScript Elliptic Curve Integrated Encryption Scheme (ECIES) Library - Based off Geth's implementation",
   "main": "dist/lib/src/typescript/index.js",
   "types": "index.d.ts",

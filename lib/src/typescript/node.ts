@@ -238,3 +238,5 @@ export const decrypt = (privateKey: Buffer, encrypted: Buffer): Promise<Buffer> 
       }))
   }
 })
+
+export * from './model'

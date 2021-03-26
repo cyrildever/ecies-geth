@@ -361,3 +361,37 @@ describe('ecies', () => {
     })
   })
 })
+describe('KeyPath', () => {
+  it('should reject wrong values at instantiation', () => {
+    return expect(() => ecies.KeyPath('wrong-key-path')).to.throw(Error, 'invalid value for path')
+  })
+  it('should reject path exceeding limits', () => {
+    return expect(() => ecies.KeyPath('m/0\'/0/2097152')).to.throw(Error, 'invalid path with value exceeding its limits')
+  })
+  describe('next', () => {
+    it('should return the correct next path', () => {
+      const expected = 'm/0\'/0/124'
+      const found = ecies.KeyPath('m/0\'/0/123').next().value
+      return found.should.equal(expected)
+    })
+  })
+  describe('parse', () => {
+    it('should return the right Path object', () => {
+      const expected = ecies.Path('2\'', '0', '123')
+      const found = ecies.KeyPath('m/2\'/0/123').parse()
+      return found.should.eqls(expected)
+    })
+  })
+  describe('valueOf', () => {
+    it('should allow for appropriate comparison of paths', () => {
+      const smaller = ecies.KeyPath('m/0\'/0/1234')
+      const bigger = ecies.KeyPath('m/0\'/1/0')
+      return expect(bigger.valueOf() > smaller.valueOf()).to.be.true
+    })
+    it('should give the actual value behind the path', () => {
+      const expected = 2097152
+      const found = ecies.KeyPath('m/0\'/1/0').valueOf()
+      return found.should.equal(expected)
+    })
+  })
+})

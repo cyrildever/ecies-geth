@@ -53,3 +53,34 @@ export declare const encrypt: (publicKeyTo: Buffer, msg: Buffer, opts?: {
  * @return {Promise.<Buffer>} - A promise that resolves with the plaintext on successful decryption and rejects on failure
  */
 export declare const decrypt: (privateKey: Buffer, encrypted: Buffer) => Promise<Buffer>
+/**
+ * From Ethereum's ECIES key path implementation, a Path should be a string formatted like `m/0'/0/0`
+ * where the first part after the `m` is the account, the second is the scope and the last the key index.
+ *
+ * NB: Account and scope shouldn't go over 2^16-1 (65535), keyIndex shouldn't go over 2^21-1 (2097151) in order to
+ * to respect the current valueOf() algorithm on all devices.
+ */
+export interface Path {
+  readonly account: string
+  readonly scope: string
+  readonly keyIndex: string
+}
+export declare const Path: (account: string, scope: string, keyIndex: string) => Path
+/**
+ * KeyPath takes a path string and handles path manipulation (such as parsing it to a Path or getting the next path value)
+ */
+export interface KeyPath {
+  readonly value: string
+  parse: () => Path
+  next: (increment?: number) => KeyPath
+  valueOf: () => number
+}
+/**
+* Build an immutable key path
+*
+* @param {string} value - The path string
+* @returns an instance of KeyPath
+* @throws invalid value for path
+* @throws invalid path with value exceeding its limits
+*/
+export declare const KeyPath: (value: string) => KeyPath
