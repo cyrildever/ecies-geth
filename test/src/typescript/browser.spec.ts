@@ -1,8 +1,9 @@
 import chaiAsPromised from 'chai-as-promised'
-chai.use(chaiAsPromised)
 
 type ECIES = typeof import('../../..') // only import types from the node
 const ecies = require('../../../lib/src/typescript/index') as ECIES
+
+chai.use(chaiAsPromised)
 
 declare function expect(val: any, message?: string): any
 

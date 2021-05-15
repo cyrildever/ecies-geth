@@ -1,8 +1,9 @@
-import * as ecies from '../../../lib/src/typescript/node'
-
 import * as chai from 'chai'
 import 'mocha'
 import chaiAsPromised from 'chai-as-promised'
+
+import * as ecies from '../../../lib/src/typescript/node'
+
 chai.use(chaiAsPromised)
 chai.should()
 const expect = chai.expect
