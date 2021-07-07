@@ -115,6 +115,11 @@ This library relies on the following dependencies:
 - [`elliptic`](https://www.npmjs.com/package/elliptic);
 - [`secp256k1`](https://www.npmjs.com/package/secp256k1).
 
+To run the tests, you would need to install [`live-server`](https://www.npmjs.com/package/live-server):
+```console
+npm i -g live-server
+```
+
 
 ### Credits
 
