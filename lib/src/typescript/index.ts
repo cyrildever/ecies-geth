@@ -26,11 +26,11 @@ import { } from './node' // type definitions
 
 // try to use secp256k1, fallback to browser implementation
 try {
-  module.exports = require('./node')
+  module.exports = require('./node') // eslint-disable-line @typescript-eslint/no-unsafe-assignment
 } catch (e) {
   if (process.env.ECCRYPTO_NO_FALLBACK) { // eslint-disable-line @typescript-eslint/strict-boolean-expressions
     throw e
   } else {
-    module.exports = require('./browser')
+    module.exports = require('./browser') // eslint-disable-line @typescript-eslint/no-unsafe-assignment
   }
 }

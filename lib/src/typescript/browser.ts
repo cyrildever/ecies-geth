@@ -56,7 +56,7 @@ const randomBytes = (size: number): Buffer =>
 
 // Get the browser SHA256 implementation
 const sha256 = (msg: Int8Array | Int16Array | Int32Array | Uint8Array | Uint16Array | Uint32Array | Uint8ClampedArray | Float32Array | Float64Array | DataView | ArrayBuffer): Promise<Buffer> =>
-  subtle.digest({ name: 'SHA-256' }, msg).then(Buffer.from) as Promise<Buffer>
+  subtle.digest({ name: 'SHA-256' }, msg).then(Buffer.from)
 
 // The KDF as implemented in Parity mimics Geth's implementation
 export const kdf = (secret: Buffer, outputLength: number): Promise<Buffer> => {
@@ -84,7 +84,7 @@ const aesCtrEncrypt = (
     .importKey('raw', key, 'AES-CTR', false, ['encrypt'])
     .then(cryptoKey =>
       subtle.encrypt({ name: 'AES-CTR', counter: counter, length: 128 }, cryptoKey, data)
-    ).then(Buffer.from) as Promise<Buffer>
+    ).then(Buffer.from)
 
 const aesCtrDecrypt = (
   counter: Buffer,
@@ -95,7 +95,7 @@ const aesCtrDecrypt = (
     .importKey('raw', key, 'AES-CTR', false, ['decrypt'])
     .then(cryptoKey =>
       subtle.decrypt({ name: 'AES-CTR', counter: counter, length: 128 }, cryptoKey, data)
-    ).then(Buffer.from) as Promise<Buffer>
+    ).then(Buffer.from)
 
 const hmacSha256Sign = (
   key: Int8Array | Int16Array | Int32Array | Uint8Array | Uint16Array | Uint32Array | Uint8ClampedArray | Float32Array | Float64Array | DataView | ArrayBuffer,
@@ -114,7 +114,7 @@ const hmacSha256Verify = (
 ): Promise<boolean> => {
   const algorithm = { name: 'HMAC', hash: { name: 'SHA-256' } }
   const keyp = subtle.importKey('raw', key, algorithm, false, ['verify'])
-  return keyp.then(cryptoKey => subtle.verify(algorithm, cryptoKey, sig, msg)) as Promise<boolean>
+  return keyp.then(cryptoKey => subtle.verify(algorithm, cryptoKey, sig, msg))
 }
 
 /**
@@ -147,7 +147,7 @@ export const sign = (privateKey: Buffer, msg: Buffer): Promise<Buffer> => new Pr
   } else if (msg.length > 32) {
     reject(new Error('Message is too long (max 32 bytes)'))
   } else {
-    resolve(Buffer.from(ec.sign(msg, privateKey, { canonical: true }).toDER('hex'), 'hex'))
+    resolve(Buffer.from(ec.sign(msg, privateKey, { canonical: true }).toDER('hex'), 'hex')) // eslint-disable-line @typescript-eslint/no-unsafe-argument
   }
 })
 
@@ -167,7 +167,7 @@ export const verify = (publicKey: Buffer, msg: Buffer, sig: Buffer): Promise<tru
       reject(new Error('Message should not be empty'))
     } else if (msg.length > 32) {
       reject(new Error('Message is too long (max 32 bytes)'))
-    } else if (!ec.verify(msg, sig.toString('hex') as any, publicKey, 'hex')) {
+    } else if (!ec.verify(msg, sig.toString('hex') as any, publicKey, 'hex')) { // eslint-disable-line @typescript-eslint/no-unsafe-argument
       reject(new Error('Bad signature'))
     } else {
       resolve(true)

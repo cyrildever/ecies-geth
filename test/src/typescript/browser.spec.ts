@@ -1,12 +1,13 @@
 import chaiAsPromised from 'chai-as-promised'
 
 type ECIES = typeof import('../../..') // only import types from the node
-const ecies = require('../../../lib/src/typescript/index') as ECIES
+const ecies = require('../../../lib/src/typescript/index') as ECIES // eslint-disable-line @typescript-eslint/no-var-requires
 
 chai.use(chaiAsPromised)
 
 declare function expect(val: any, message?: string): any
 
+/*  eslint-disable @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call */
 describe('ecies', () => {
   describe('kdf', () => {
     it('should find fragment for known secret keys', async () => {
@@ -395,4 +396,4 @@ describe('KeyPath', () => {
     })
   })
 })
-
+/*  eslint-enable @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return */
