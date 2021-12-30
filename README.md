@@ -45,9 +45,9 @@ const crypto = require('crypto');
 const ecies = require('ecies-geth');
 
 const privateKeyA = crypto.randomBytes(32);
-const publicKeyA = ecies.getPublic(privateKeyA);
+const publicKeyA = await ecies.getPublic(privateKeyA);
 const privateKeyB = crypto.randomBytes(32);
-const publicKeyB = ecies.getPublic(privateKeyB);
+const publicKeyB = await ecies.getPublic(privateKeyB);
 
 // Encrypting the message for B.
 ecies.encrypt(publicKeyB, Buffer.from('msg to b')).then(function(encrypted) {
@@ -75,7 +75,7 @@ const ecies = require('ecies-geth');
 // A new random 32-byte private key.
 const privateKey = crypto.randomBytes(32)
 // Corresponding uncompressed (65-byte) public key.
-const publicKey = ecies.getPublic(privateKey);
+const publicKey = await ecies.getPublic(privateKey);
 
 const str = 'message to sign';
 // Always hash your message to sign!
@@ -98,9 +98,9 @@ const crypto = require('crypto');
 const ecies = require('ecies-geth');
 
 const privateKeyA = crypto.randomBytes(32);
-const publicKeyA = ecies.getPublic(privateKeyA);
+const publicKeyA = await ecies.getPublic(privateKeyA);
 const privateKeyB = crypto.randomBytes(32);
-const publicKeyB = ecies.getPublic(privateKeyB);
+const publicKeyB = await ecies.getPublic(privateKeyB);
 
 ecies.derive(privateKeyA, publicKeyB).then(function(sharedKey1) {
   ecies.derive(privateKeyB, publicKeyA).then(function(sharedKey2) {
@@ -133,4 +133,4 @@ See the [LICENSE](LICENSE) file.
 
 
 <hr />
-&copy; 2019-2021 Cyril Dever. All rights reserved.
+&copy; 2019-2022 Cyril Dever. All rights reserved.
