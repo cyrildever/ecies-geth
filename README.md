@@ -27,7 +27,7 @@ The ECIES implementation details mimic those introduced by both Geth and Parity,
 
 #### _Cryptography Warning_
 
-The ECIES implementation given here is solely based off Geth's and Parity's implementations. This module offers no guarantee as to the security or validity of the implementation. Furthermore, this project is being actively developed and as such should not be used for highly sensitive informations without further investigation on its robustness.
+The ECIES implementation given here is solely based off Geth's and Parity's implementations. This module offers no guarantee as to the security or validity of the implementation. Furthermore, this project is being actively developed and as such should not be used for highly sensitive informations without further investigation on its robustness. Any feedback or concerns regarding its security would be greatly appreciated.
 
 
 ### Usage
@@ -128,7 +128,7 @@ Thanks to [@Methrat0n](https://github.com/Methrat0n/) for the initial work on th
 
 ### License
 
-This module is distributed under an MIT license.
+This module is distributed under a MIT license. \
 See the [LICENSE](LICENSE) file.
 
 
