@@ -4,6 +4,7 @@
 
 Features:
 
+  - Remove dependency to (vulnerable) `live-server` only used for testing purpose;
   - **Breaking change:** Messages encrypted with `ecies-geth` could not be decrypted using `go-ethereum` due to an `ecies: invalid message error`. Upon analysis of the source code, a nuanced discrepancy was identified. Specifically, the issue lay in the padding of the shared key: `go-ethereum` pads the shared key with zeros when it's less than 32 bytes, a behavior not mirrored in `ecies-geth`. Follow the links for specific lines in the sources:
 
     https://github.com/ethereum/go-ethereum/blob/master/crypto/ecies/ecies.go#L134-L136
