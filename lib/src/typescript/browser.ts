@@ -195,7 +195,7 @@ export const derive = (privateKeyA: Buffer, publicKeyB: Buffer): Promise<Buffer>
     const keyA = ec.keyFromPrivate(privateKeyA)
     const keyB = ec.keyFromPublic(publicKeyB)
     const Px = keyA.derive(keyB.getPublic()) // BN instance
-    resolve(Buffer.from(Px.toArray()))
+    resolve(pad32(Buffer.from(Px.toArray())))
   }
 })
 
@@ -266,6 +266,14 @@ export const decrypt = (privateKey: Buffer, encrypted: Buffer): Promise<Buffer> 
       ).then(Buffer.from))
   }
 })
+
+const pad32 = (msg: Buffer): Buffer => {
+  if (msg.length < 32) {
+    const buff = Buffer.alloc(32).fill(0)
+    msg.copy(buff, 32 - msg.length)
+    return buff
+  } else return msg
+}
 
 export * from './model'
 
