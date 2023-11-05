@@ -168,7 +168,7 @@ export const derive = (privateKey: Buffer, publicKey: Buffer): Promise<Buffer> =
     const keyA = ec.keyFromPrivate(privateKey)
     const keyB = ec.keyFromPublic(publicKey)
     const Px = keyA.derive(keyB.getPublic()) // BN instance
-    resolve(Buffer.from(Px.toArray()))
+    resolve(pad32(Buffer.from(Px.toArray())))
   }
 })
 
