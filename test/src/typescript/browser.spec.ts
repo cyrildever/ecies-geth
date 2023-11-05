@@ -227,9 +227,8 @@ describe('ecies', () => {
       return found.should.eqls(expected)
     })
     it('should always return 32 bytes', async () => {
-      const priv = Buffer.from("0ac29f41ad75406a9878ca70050846b2d4f0bdbb330efdfb5dc95eab436981af", "hex")
-      const pub = Buffer.from("048f5bab144dfdfca183b1a2ea2b9d6b16e835f0817c5670f5614c7b7f697318ddfa4fe056fadd75dff6ec213c6f3d43ed5663af1729c1b854f22262ca8ca37147", "hex")
-      const ephemPrivateKey = Buffer.from("2cbcf1abbbf33b3e5e070eb2920c6ffdbbbd6f101a2b42d81efdc8ed659d534b", "hex")
+      const pub = Buffer.from('048f5bab144dfdfca183b1a2ea2b9d6b16e835f0817c5670f5614c7b7f697318ddfa4fe056fadd75dff6ec213c6f3d43ed5663af1729c1b854f22262ca8ca37147', 'hex')
+      const ephemPrivateKey = Buffer.from('2cbcf1abbbf33b3e5e070eb2920c6ffdbbbd6f101a2b42d81efdc8ed659d534b', 'hex')
       const found = await ecies.derive(ephemPrivateKey, pub)
 
       return found.should.have.lengthOf(32)
@@ -297,13 +296,13 @@ describe('ecies', () => {
       return found1.should.not.eqls(found2)
     })
     it('should correctly encrypt when derived key has less than 32 bytes, to be able to be decypted with go-ethereum', async () => {
-      const priv = Buffer.from("0ac29f41ad75406a9878ca70050846b2d4f0bdbb330efdfb5dc95eab436981af", "hex")
+      const priv = Buffer.from('0ac29f41ad75406a9878ca70050846b2d4f0bdbb330efdfb5dc95eab436981af', 'hex')
       const pub = await ecies.getPublic(priv)
-      const msg = Buffer.from("ROOOT")
-      const iv = Buffer.from("671a18cf8c8209721a612093803c7d1e", "hex")
-      const ephemPrivateKey = Buffer.from("2cbcf1abbbf33b3e5e070eb2920c6ffdbbbd6f101a2b42d81efdc8ed659d534b", "hex")
+      const msg = Buffer.from('ROOOT')
+      const iv = Buffer.from('671a18cf8c8209721a612093803c7d1e', 'hex')
+      const ephemPrivateKey = Buffer.from('2cbcf1abbbf33b3e5e070eb2920c6ffdbbbd6f101a2b42d81efdc8ed659d534b', 'hex')
       const found = await ecies.encrypt(pub, msg, { iv, ephemPrivateKey })
-      const expected = Buffer.from("04befb0ab9b372ce490d3bd65dd0dae1dafc65c9377f6c364c52a97ac8ff34b00b0c6554003a4e11fe14a38cba2e28ab4b9d83f2e7092e4fcda473a722a72f648a671a18cf8c8209721a612093803c7d1e8765fa1284acedb255cb7c42c8373b8b9c497f097f04640f37296b6c7be57017633a1f945b", "hex")
+      const expected = Buffer.from('04befb0ab9b372ce490d3bd65dd0dae1dafc65c9377f6c364c52a97ac8ff34b00b0c6554003a4e11fe14a38cba2e28ab4b9d83f2e7092e4fcda473a722a72f648a671a18cf8c8209721a612093803c7d1e8765fa1284acedb255cb7c42c8373b8b9c497f097f04640f37296b6c7be57017633a1f945b', 'hex')
 
       return found.should.eqls(expected)
     })
@@ -346,10 +345,10 @@ describe('ecies', () => {
       return expect(found).to.be.rejectedWith('Invalid Ciphertext. Data is too small. It should ba at least 113 bytes')
     })
     it('should correctly decrypt when derived key has less than 32 bytes', async () => {
-      const encrypted = Buffer.from("04befb0ab9b372ce490d3bd65dd0dae1dafc65c9377f6c364c52a97ac8ff34b00b0c6554003a4e11fe14a38cba2e28ab4b9d83f2e7092e4fcda473a722a72f648a671a18cf8c8209721a612093803c7d1e8765fa1284acedb255cb7c42c8373b8b9c497f097f04640f37296b6c7be57017633a1f945b", "hex")
-      const priv = Buffer.from("0ac29f41ad75406a9878ca70050846b2d4f0bdbb330efdfb5dc95eab436981af", "hex")
+      const encrypted = Buffer.from('04befb0ab9b372ce490d3bd65dd0dae1dafc65c9377f6c364c52a97ac8ff34b00b0c6554003a4e11fe14a38cba2e28ab4b9d83f2e7092e4fcda473a722a72f648a671a18cf8c8209721a612093803c7d1e8765fa1284acedb255cb7c42c8373b8b9c497f097f04640f37296b6c7be57017633a1f945b', 'hex')
+      const priv = Buffer.from('0ac29f41ad75406a9878ca70050846b2d4f0bdbb330efdfb5dc95eab436981af', 'hex')
       const found = await ecies.decrypt(priv, encrypted)
-      const expected = Buffer.from("ROOOT")
+      const expected = Buffer.from('ROOOT')
 
       return found.should.eqls(expected)
     })
