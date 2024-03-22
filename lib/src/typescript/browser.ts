@@ -43,7 +43,7 @@ declare global {
 const ec = new EC('secp256k1')
 /* eslint-disable @typescript-eslint/strict-boolean-expressions */
 const crypto = window.crypto || window.msCrypto! // eslint-disable-line @typescript-eslint/no-non-null-assertion
-const subtle: SubtleCrypto = (crypto.subtle || crypto.webkitSubtle)! // eslint-disable-line @typescript-eslint/no-non-null-assertion
+const subtle: SubtleCrypto = crypto.subtle || crypto.webkitSubtle // eslint-disable-line @typescript-eslint/no-non-null-assertion
 /* eslint-enable @typescript-eslint/strict-boolean-expressions */
 
 if (subtle === undefined || crypto === undefined) {
@@ -214,7 +214,7 @@ export const encrypt = async (publicKeyTo: Buffer, msg: Buffer, opts?: { iv?: Bu
   return derive(ephemPrivateKey, publicKeyTo)
     .then(sharedPx => kdf(sharedPx, 32))
     .then(async hash => {
-      const iv = opts!.iv || randomBytes(16) // eslint-disable-line @typescript-eslint/no-non-null-assertion
+      const iv = opts.iv || randomBytes(16) // eslint-disable-line @typescript-eslint/no-non-null-assertion
       const encryptionKey = hash.slice(0, 16)
       return aesCtrEncrypt(iv, encryptionKey, msg)
         .then(cipherText => Buffer.concat([iv, cipherText]))

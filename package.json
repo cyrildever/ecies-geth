@@ -1,6 +1,6 @@
 {
   "name": "ecies-geth",
-  "version": "1.7.0",
+  "version": "1.7.1",
   "description": "JavaScript Elliptic Curve Integrated Encryption Scheme (ECIES) Library - Based off Geth's implementation",
   "main": "dist/lib/src/typescript/index.js",
   "types": "index.d.ts",
@@ -36,25 +36,25 @@
   },
   "homepage": "https://github.com/cyrildever/ecies-geth#readme",
   "dependencies": {
-    "elliptic": "^6.5.4",
+    "elliptic": "^6.5.5",
     "secp256k1": "^5.0.0"
   },
   "devDependencies": {
-    "@types/chai": "^4.3.9",
-    "@types/chai-as-promised": "^7.1.7",
-    "@types/elliptic": "^6.4.16",
-    "@types/mocha": "^10.0.3",
-    "@types/node": "^20.8.10",
-    "@types/secp256k1": "^4.0.5",
-    "@typescript-eslint/eslint-plugin": "^6.9.1",
-    "@typescript-eslint/parser": "^6.9.1",
+    "@types/chai": "^4.3.14",
+    "@types/chai-as-promised": "^7.1.8",
+    "@types/elliptic": "^6.4.18",
+    "@types/mocha": "^10.0.6",
+    "@types/node": "^20.11.30",
+    "@types/secp256k1": "^4.0.6",
+    "@typescript-eslint/eslint-plugin": "^7.3.1",
+    "@typescript-eslint/parser": "^7.3.1",
     "browserify": "^17.0.0",
-    "chai": "^4.3.10",
+    "chai": "^4.4.0",
     "chai-as-promised": "^7.1.1",
-    "eslint": "^8.53.0",
+    "eslint": "^8.57.0",
     "eslint-plugin-no-loops": "~0.3.0",
-    "mocha": "^10.2.0",
-    "ts-node": "^10.9.1",
-    "typescript": "^5.2.2"
+    "mocha": "^10.3.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.4.3"
   }
 }
