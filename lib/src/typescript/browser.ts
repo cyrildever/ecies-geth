@@ -43,7 +43,7 @@ declare global {
 const ec = new EC('secp256k1')
 /* eslint-disable @typescript-eslint/strict-boolean-expressions */
 const crypto = window.crypto || window.msCrypto! // eslint-disable-line @typescript-eslint/no-non-null-assertion
-const subtle: SubtleCrypto = crypto.subtle || crypto.webkitSubtle // eslint-disable-line @typescript-eslint/no-non-null-assertion
+const subtle: SubtleCrypto = crypto.subtle || crypto.webkitSubtle
 /* eslint-enable @typescript-eslint/strict-boolean-expressions */
 
 if (subtle === undefined || crypto === undefined) {
@@ -147,7 +147,7 @@ export const sign = (privateKey: Buffer, msg: Buffer): Promise<Buffer> => new Pr
   } else if (msg.length > 32) {
     reject(new Error('Message is too long (max 32 bytes)'))
   } else {
-    resolve(Buffer.from(ec.sign(msg, privateKey, { canonical: true }).toDER('hex'), 'hex')) // eslint-disable-line @typescript-eslint/no-unsafe-argument
+    resolve(Buffer.from(ec.sign(msg, privateKey, { canonical: true }).toDER('hex'), 'hex'))
   }
 })
 
@@ -172,7 +172,7 @@ export const verify = (publicKey: Buffer, msg: Buffer, sig: Buffer): Promise<tru
     } else {
       resolve(true)
     }
-  } catch (e) {
+  } catch (_) { // eslint-disable-line @typescript-eslint/no-unused-vars
     reject(new Error('Invalid arguments'))
   }
 })
@@ -208,13 +208,13 @@ export const derive = (privateKeyA: Buffer, publicKeyB: Buffer): Promise<Buffer>
  * @return {Promise.<Buffer>} - A promise that resolves with the ECIES structure serialized
  */
 export const encrypt = async (publicKeyTo: Buffer, msg: Buffer, opts?: { iv?: Buffer; ephemPrivateKey?: Buffer }): Promise<Buffer> => {
-  /* eslint-disable @typescript-eslint/strict-boolean-expressions */
+
   opts = opts || {}
   const ephemPrivateKey = opts.ephemPrivateKey || randomBytes(32)
   return derive(ephemPrivateKey, publicKeyTo)
     .then(sharedPx => kdf(sharedPx, 32))
     .then(async hash => {
-      const iv = opts.iv || randomBytes(16) // eslint-disable-line @typescript-eslint/no-non-null-assertion
+      const iv = opts.iv || randomBytes(16)
       const encryptionKey = hash.slice(0, 16)
       return aesCtrEncrypt(iv, encryptionKey, msg)
         .then(cipherText => Buffer.concat([iv, cipherText]))
@@ -227,7 +227,7 @@ export const encrypt = async (publicKeyTo: Buffer, msg: Buffer, opts?: { iv?: Bu
             )
         )
     })
-  /* eslint-enable @typescript-eslint/strict-boolean-expressions */
+
 }
 
 const metaLength = 1 + 64 + 16 + 32

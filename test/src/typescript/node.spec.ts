@@ -62,7 +62,7 @@ describe('ecies', () => {
       const foundPublic = await ecies.getPublic(secret)
       const derived = ecies.derive(secret, foundPublic)
 
-      return expect(derived).to.be.fulfilled
+      return expect(derived).to.be.fulfilled // eslint-disable-line @typescript-eslint/no-unsafe-return
     })
   })
   describe('sign', () => {
@@ -71,7 +71,7 @@ describe('ecies', () => {
       const msg = Buffer.alloc(10)
       const found = ecies.sign(secret, msg)
 
-      return expect(found).to.be.fulfilled
+      return expect(found).to.be.fulfilled // eslint-disable-line @typescript-eslint/no-unsafe-return
     })
     it('should NOT accept smaller buffer', () => {
       const smallerSecret = Buffer.from('b9fc3b425d6c1745b9c9631d4c1db7a093a36e0cf7c0bf85dc1130b8a0', 'hex')
@@ -172,7 +172,7 @@ describe('ecies', () => {
       const sign = Buffer.from('this-is-not-a-signature')
       const found = ecies.verify(pub, msg, sign)
 
-      return expect(found).to.be.rejectedWith('Invalid signature')
+      return expect(found).to.be.rejectedWith('Invalid signature') // eslint-disable-line @typescript-eslint/no-unsafe-return
     })
   })
   describe('derive', () => {
@@ -372,7 +372,7 @@ describe('ecies', () => {
 
       const owner2Secret = Buffer.from('b9fc3b425d6c1745b9c963c97e6e1d4c')
       const decrypted = ecies.decrypt(owner2Secret, encrypted)
-      return expect(decrypted).to.be.rejectedWith('Incorrect MAC')
+      return expect(decrypted).to.be.rejectedWith('Incorrect MAC') // eslint-disable-line @typescript-eslint/no-unsafe-return
     })
   })
   describe('sign and verify', () => {

@@ -144,7 +144,7 @@ export const verify = (publicKey: Buffer, msg: Buffer, sig: Buffer): Promise<tru
       } else {
         reject(new Error('Bad signature'))
       }
-    } catch (e) {
+    } catch (_) { // eslint-disable-line @typescript-eslint/no-unused-vars
       reject(new Error('Invalid signature'))
     }
   }
@@ -181,14 +181,14 @@ export const derive = (privateKey: Buffer, publicKey: Buffer): Promise<Buffer> =
  * @return {Promise.<Buffer>} - A promise that resolves with the ECIES structure serialized
  */
 export const encrypt = async (publicKeyTo: Buffer, msg: Buffer, opts?: { iv?: Buffer; ephemPrivateKey?: Buffer }): Promise<Buffer> => {
-  /* eslint-disable @typescript-eslint/strict-boolean-expressions */
+
   opts = opts || {}
   const ephemPrivateKey = opts.ephemPrivateKey || randomBytes(32)
   return derive(ephemPrivateKey, publicKeyTo)
     .then(sharedPx => kdf(sharedPx, 32))
     .then(async hash => {
       const encryptionKey = hash.slice(0, 16)
-      const iv = opts.iv || randomBytes(16) // eslint-disable-line @typescript-eslint/no-non-null-assertion
+      const iv = opts.iv || randomBytes(16)
       const macKey = sha256(hash.slice(16))
       const cipherText = aes128CtrEncrypt(iv, encryptionKey, msg)
       const HMAC = hmacSha256(macKey, cipherText)
@@ -196,7 +196,7 @@ export const encrypt = async (publicKeyTo: Buffer, msg: Buffer, opts?: { iv?: Bu
         Buffer.concat([ephemPublicKey, cipherText, HMAC])
       )
     })
-  /* eslint-enable @typescript-eslint/strict-boolean-expressions */
+
 }
 
 const metaLength = 1 + 64 + 16 + 32

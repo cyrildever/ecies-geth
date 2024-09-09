@@ -1,11 +1,17 @@
 import chaiAsPromised from 'chai-as-promised'
+import * as chai from 'chai'
+
+if (typeof window !== 'undefined') {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-require-imports
+  window.Buffer = require('buffer/').Buffer
+}
 
 type ECIES = typeof import('../../..') // only import types from the node
-const ecies = require('../../../lib/src/typescript/index') as ECIES // eslint-disable-line @typescript-eslint/no-var-requires
+const ecies = require('../../../lib/src/typescript/index') as ECIES // eslint-disable-line @typescript-eslint/no-require-imports
 
+chai.should()
 chai.use(chaiAsPromised)
-
-declare function expect(val: any, message?: string): any
+var expect = chai.expect
 
 /*  eslint-disable @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call */
 describe('ecies', () => {
