@@ -1,5 +1,10 @@
 # CHANGELOG.md
 
+## 1.7.3 (2024-10-23)
+
+Features:
+  - Remove support for `ES3` to new default `ES5`.
+
 ## 1.7.0 (2023-11-05)
 
 Features:
@@ -14,7 +19,7 @@ Features:
 
 ## 1.6.10 (2023-03-21)
 
-Feature:
+Features:
   - Add `ignoreDeprecations` in `tsconfig.json` at compilation to keep target at `ES3`.
 
 ## 1.5.0 (2021-03-26)
@@ -45,9 +50,8 @@ Features:
 ## 1.0.0 (2019-12-23)
 
 Features:
-
   - Original production version.
 
 
 <hr />
-&copy; 2019-2023 Cyril Dever. All rights reserved.
+&copy; 2019-2024 Cyril Dever. All rights reserved.

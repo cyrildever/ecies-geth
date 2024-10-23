@@ -11,9 +11,9 @@ const ecies = require('../../../lib/src/typescript/index') as ECIES // eslint-di
 
 chai.should()
 chai.use(chaiAsPromised)
-var expect = chai.expect
+const expect = chai.expect
 
-/*  eslint-disable @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call */
+/*  eslint-disable @typescript-eslint/no-unsafe-return */
 describe('ecies', () => {
   describe('kdf', () => {
     it('should find fragment for known secret keys', async () => {
@@ -428,4 +428,4 @@ describe('KeyPath', () => {
     })
   })
 })
-/*  eslint-enable @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return */
+/*  eslint-enable @typescript-eslint/no-unsafe-return */
