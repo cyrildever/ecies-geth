@@ -25,14 +25,32 @@ SOFTWARE.
 /**
  * Note: This module is based off the original eccrypto module.
  */
-import { createHash, BinaryLike, createCipheriv, createDecipheriv, createHmac, randomBytes } from 'crypto'
+
+// import { createHash, BinaryLike, createCipheriv, createDecipheriv, createHmac, randomBytes } from 'crypto'
 import { ec as EC } from 'elliptic'
 import secp256k1 from 'secp256k1'
 
 const ec = new EC('secp256k1')
+let cryptoModule: any
+if (typeof window === 'undefined') {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-require-imports
+  cryptoModule = require('crypto')
+}
 
-const sha256 = (msg: BinaryLike): Buffer =>
-  createHash('sha256').update(msg).digest()
+const sha256 = (msg: any): any => {
+  /* eslint-disable */
+  if (typeof window !== 'undefined') {
+    const browserCrypto = window.crypto || window.msCrypto!
+    const subtle: SubtleCrypto = browserCrypto.subtle || browserCrypto.webkitSubtle
+    return subtle.digest({ name: 'SHA-256' }, msg).then(Buffer.from)
+  } else if (cryptoModule) {
+    /*  */
+    return cryptoModule.createHash('sha256').update(msg).digest()
+  } else {
+    throw Error('missing mandatory crypto modules')
+  }
+  /* eslint-enable */
+}
 
 const hmacSha256 = (key: BinaryLike, msg: BinaryLike): Buffer =>
   createHmac('sha256', key).update(msg).digest()

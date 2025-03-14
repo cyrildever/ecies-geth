@@ -6,8 +6,7 @@ if (typeof window !== 'undefined') {
   window.Buffer = require('buffer/').Buffer
 }
 
-type ECIES = typeof import('../../../lib/src/typescript/node') // only import types from the node
-const ecies = require('../../../lib/src/typescript/index') as ECIES // eslint-disable-line @typescript-eslint/no-require-imports
+import * as ecies from '../../../lib/src/typescript'
 
 chai.should()
 chai.use(chaiAsPromised)
@@ -23,7 +22,7 @@ describe('ecies', () => {
 
       return found.should.eqls(expected)
     })
-    it('should round the ouput length to the next 32 mutiple', async () => {
+    it('should round the ouput length to the next 32 muliple', async () => {
       const secret = Buffer.from('b9fc3b425d6c1745b9c963c97e6e1d4c1db7a093a36e0cf7c0bf85dc1130b8a0', 'hex')
       const found1 = await ecies.kdf(secret, 35)
       const found2 = await ecies.kdf(secret, 64)

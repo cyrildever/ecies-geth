@@ -2,7 +2,7 @@ import * as chai from 'chai'
 import 'mocha'
 import chaiAsPromised from 'chai-as-promised'
 
-import * as ecies from '../../../lib/src/typescript/node'
+import * as ecies from '../../../lib/src/typescript'
 
 chai.use(chaiAsPromised)
 chai.should()

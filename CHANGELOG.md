@@ -1,9 +1,11 @@
 # CHANGELOG.md
 
 
-## 1.7.5 (2025-03-14)
+## 1.8.0 (2025-03-14)
 
 Features:
+  - **Breaking change:** Remove `ES5` support;
+  - Merge eveything into a single file;
   - Change target of the `types` path in `package.json`.
 
 ## 1.7.3 (2024-10-23)
