@@ -1,5 +1,10 @@
 # CHANGELOG.md
 
+## 1.7.5
+
+Features:
+  - Remove `browser` field in `package.json`.
+
 ## 1.7.3 (2024-10-23)
 
 Features:
