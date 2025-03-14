@@ -6,7 +6,7 @@ if (typeof window !== 'undefined') {
   window.Buffer = require('buffer/').Buffer
 }
 
-type ECIES = typeof import('../../..') // only import types from the node
+type ECIES = typeof import('../../../lib/src/typescript/node') // only import types from the node
 const ecies = require('../../../lib/src/typescript/index') as ECIES // eslint-disable-line @typescript-eslint/no-require-imports
 
 chai.should()

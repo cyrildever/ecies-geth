@@ -1,5 +1,11 @@
 # CHANGELOG.md
 
+
+## 1.7.5 (2025-03-14)
+
+Features:
+  - Change target of the `types` path in `package.json`.
+
 ## 1.7.3 (2024-10-23)
 
 Features:
