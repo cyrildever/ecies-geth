@@ -1,6 +1,12 @@
 # CHANGELOG.md
 
-## 1.7.5
+
+## 1.7.6 (2026-01-05)
+
+Features:
+  - Cast buffer as `BufferSource` for browser implementation when necessary.
+
+## 1.7.5 (2025-03-14)
 
 Features:
   - Remove `browser` field in `package.json`.

@@ -56,7 +56,7 @@ const randomBytes = (size: number): Buffer =>
 
 // Get the browser SHA256 implementation
 const sha256 = (msg: Int8Array | Int16Array | Int32Array | Uint8Array | Uint16Array | Uint32Array | Uint8ClampedArray | Float32Array | Float64Array | DataView | ArrayBuffer): Promise<Buffer> =>
-  subtle.digest({ name: 'SHA-256' }, msg).then(Buffer.from)
+  subtle.digest({ name: 'SHA-256' }, msg as BufferSource).then(Buffer.from)
 
 // The KDF as implemented in Parity mimics Geth's implementation
 export const kdf = (secret: Buffer, outputLength: number): Promise<Buffer> => {
@@ -81,9 +81,9 @@ const aesCtrEncrypt = (
   data: Int8Array | Int16Array | Int32Array | Uint8Array | Uint16Array | Uint32Array | Uint8ClampedArray | Float32Array | Float64Array | DataView | ArrayBuffer
 ): Promise<Buffer> =>
   subtle
-    .importKey('raw', key, 'AES-CTR', false, ['encrypt'])
+    .importKey('raw', key as BufferSource, 'AES-CTR', false, ['encrypt'])
     .then(cryptoKey =>
-      subtle.encrypt({ name: 'AES-CTR', counter: counter, length: 128 }, cryptoKey, data)
+      subtle.encrypt({ name: 'AES-CTR', counter: counter as BufferSource, length: 128 }, cryptoKey, data as BufferSource)
     ).then(Buffer.from)
 
 const aesCtrDecrypt = (
@@ -92,9 +92,9 @@ const aesCtrDecrypt = (
   data: Int8Array | Int16Array | Int32Array | Uint8Array | Uint16Array | Uint32Array | Uint8ClampedArray | Float32Array | Float64Array | DataView | ArrayBuffer
 ): Promise<Buffer> =>
   subtle
-    .importKey('raw', key, 'AES-CTR', false, ['decrypt'])
+    .importKey('raw', key as BufferSource, 'AES-CTR', false, ['decrypt'])
     .then(cryptoKey =>
-      subtle.decrypt({ name: 'AES-CTR', counter: counter, length: 128 }, cryptoKey, data)
+      subtle.decrypt({ name: 'AES-CTR', counter: counter as BufferSource, length: 128 }, cryptoKey, data as BufferSource)
     ).then(Buffer.from)
 
 const hmacSha256Sign = (
@@ -102,8 +102,9 @@ const hmacSha256Sign = (
   msg: Int8Array | Int16Array | Int32Array | Uint8Array | Uint16Array | Uint32Array | Uint8ClampedArray | Float32Array | Float64Array | DataView | ArrayBuffer
 ): PromiseLike<Buffer> => {
   const algorithm = { name: 'HMAC', hash: { name: 'SHA-256' } }
-  return subtle.importKey('raw', key, algorithm, false, ['sign'])
-    .then(cryptoKey => subtle.sign(algorithm, cryptoKey, msg))
+  return subtle.importKey('raw', key as BufferSource, algorithm, false, ['sign'])
+    .then(cryptoKey => subtle.sign(algorithm, cryptoKey, msg as BufferSource
+    ))
     .then(Buffer.from)
 }
 
@@ -113,8 +114,8 @@ const hmacSha256Verify = (
   sig: Int8Array | Int16Array | Int32Array | Uint8Array | Uint16Array | Uint32Array | Uint8ClampedArray | Float32Array | Float64Array | DataView | ArrayBuffer
 ): Promise<boolean> => {
   const algorithm = { name: 'HMAC', hash: { name: 'SHA-256' } }
-  const keyp = subtle.importKey('raw', key, algorithm, false, ['verify'])
-  return keyp.then(cryptoKey => subtle.verify(algorithm, cryptoKey, sig, msg))
+  const keyp = subtle.importKey('raw', key as BufferSource, algorithm, false, ['verify'])
+  return keyp.then(cryptoKey => subtle.verify(algorithm, cryptoKey, sig as BufferSource, msg as BufferSource))
 }
 
 /**
