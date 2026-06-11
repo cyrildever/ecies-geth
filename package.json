@@ -1,15 +1,16 @@
 {
   "name": "ecies-geth",
-  "version": "1.7.6",
+  "version": "1.8.0",
   "description": "JavaScript Elliptic Curve Integrated Encryption Scheme (ECIES) Library - Based off Geth's implementation",
   "main": "dist/lib/src/typescript/index.js",
   "types": "index.d.ts",
   "scripts": {
     "compile": "eslint lib/**/*.ts && tsc",
     "fix": "eslint lib/**/*.ts --fix",
-    "test-browser": "tsc && browserify ./dist/test/src/typescript/browser.spec.js -o dist/test/src/typescript/index.js --node && npx live-server --port=10001 --mount=/:test/src/typescript",
-    "test-node": "tsc && mocha 'test/src/typescript/node.spec.ts' --require ts-node/register",
-    "test": "tsc && mocha 'test/src/typescript/node.spec.ts' --require ts-node/register && browserify ./dist/test/src/typescript/browser.spec.js -o dist/test/src/typescript/index.js --node && live-server --port=10001 --mount=/:test/src/typescript",
+    "test-browser": "tsc && esbuild test/src/typescript/browser.spec.ts --bundle --outfile=dist/test/src/typescript/index.js --platform=browser --format=iife --external:crypto --external:secp256k1 && live-server --port=10001 --mount=/:test/src/typescript",
+    "test-node": "tsc && esbuild test/src/typescript/node.spec.ts --bundle --outfile=dist/test/node.spec.cjs --platform=node --format=cjs --external:secp256k1 && mocha dist/test/node.spec.cjs",
+    "test:ci": "tsc && esbuild test/src/typescript/node.spec.ts --bundle --outfile=dist/test/node.spec.cjs --platform=node --format=cjs --external:secp256k1 && mocha dist/test/node.spec.cjs",
+    "test": "npm run test-node && npm run test-browser",
     "fix-test": "eslint test/**/*.ts --fix"
   },
   "repository": {
@@ -34,29 +35,32 @@
     "url": "https://github.com/cyrildever/ecies-geth/issues"
   },
   "homepage": "https://github.com/cyrildever/ecies-geth#readme",
+  "engines": {
+    "node": ">=14"
+  },
   "dependencies": {
     "elliptic": "^6.6.1",
     "secp256k1": "^5.0.1"
   },
   "devDependencies": {
-    "@types/chai-as-promised": "^7.1.8",
-    "@eslint/eslintrc": "^3.3.3",
+    "@eslint/eslintrc": "^3.3.5",
     "@eslint/js": "^9.39.2",
-    "@types/chai": "^4.3.19",
+    "@types/chai": "^5.2.3",
+    "@types/chai-as-promised": "^8.0.2",
     "@types/elliptic": "^6.4.18",
     "@types/mocha": "^10.0.10",
-    "browserify": "^17.0.1",
-    "@types/node": "^25.0.3",
+    "@types/node": "^25.9.3",
     "@types/secp256k1": "^4.0.7",
-    "@typescript-eslint/eslint-plugin": "^8.51.0",
-    "@typescript-eslint/parser": "^8.51.0",
-    "chai-as-promised": "^7.1.1",
-    "chai": "^4.5.0",
+    "@typescript-eslint/eslint-plugin": "^8.61.0",
+    "@typescript-eslint/parser": "^8.61.0",
+    "buffer": "^6.0.3",
+    "chai": "^6.2.2",
+    "chai-as-promised": "^8.0.2",
+    "esbuild": "^0.28.0",
     "eslint": "^9.39.2",
     "eslint-plugin-no-loops": "~0.4.0",
     "globals": "^17.0.0",
-    "mocha": "^10.7.3",
-    "ts-node": "^10.9.2",
-    "typescript": "^5.9.3"
+    "mocha": "^11.7.6",
+    "typescript": "^6.0.3"
   }
 }

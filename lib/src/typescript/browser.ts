@@ -168,7 +168,7 @@ export const verify = (publicKey: Buffer, msg: Buffer, sig: Buffer): Promise<tru
       reject(new Error('Message should not be empty'))
     } else if (msg.length > 32) {
       reject(new Error('Message is too long (max 32 bytes)'))
-    } else if (!ec.verify(msg, sig.toString('hex') as any, publicKey, 'hex')) { // eslint-disable-line @typescript-eslint/no-unsafe-argument
+    } else if (!ec.verify(msg, sig.toString('hex'), publicKey, 'hex')) {
       reject(new Error('Bad signature'))
     } else {
       resolve(true)

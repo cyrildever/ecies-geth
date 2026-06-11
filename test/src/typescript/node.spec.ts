@@ -1,6 +1,9 @@
 import * as chai from 'chai'
-import 'mocha'
 import chaiAsPromised from 'chai-as-promised'
+// Side-effect import: registers the `.should` getter (runtime) and loads its
+// global type augmentation. Chai 6 ships no types, so the augmentation comes
+// from @types/chai's register-should.d.ts.
+import 'chai/register-should'
 
 import * as ecies from '../../../lib/src/typescript/node'
 

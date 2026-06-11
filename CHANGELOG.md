@@ -1,6 +1,16 @@
 # CHANGELOG.md
 
 
+## 1.8.0 (2026-06-11)
+
+Features:
+  - Move to TypeScript 6 / Chai 6 / Mocha 11;
+  - Replace `browserify` with `esbuild` for the test bundles (and drop `ts-node`).
+
+Note:
+  - The public API, type definitions and runtime dependencies are unchanged, and the testing/build dependencies stay in `devDependencies`.
+  - The compilation target was lifted from `ES5` to `es2020`: the published code now emits native `async`/`await`, arrow functions and `const` instead of downleveled helpers. This raises the minimum runtime to **Node.js >= 14 and modern browsers** (no longer IE11). Environments that relied on the ES5 output should pin to `1.7.x`.
+
 ## 1.7.6 (2026-01-05)
 
 Features:

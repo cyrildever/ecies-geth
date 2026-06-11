@@ -1,5 +1,9 @@
 import chaiAsPromised from 'chai-as-promised'
 import * as chai from 'chai'
+// Side-effect import: registers the `.should` getter (runtime) and loads its
+// global type augmentation. Chai 6 ships no types, so the augmentation comes
+// from @types/chai's register-should.d.ts.
+import 'chai/register-should'
 
 if (typeof window !== 'undefined') {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-require-imports
