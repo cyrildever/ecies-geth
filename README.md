@@ -120,6 +120,17 @@ To run the tests, you would need to install [`live-server`](https://www.npmjs.co
 npm i -g live-server
 ```
 
+#### _Security advisory_
+
+`npm audit` currently reports [GHSA-848j-6mx2-7j84](https://github.com/advisories/GHSA-848j-6mx2-7j84) (CVE-2025-14505, `low` severity) against `elliptic`. No patched version exists: the advisory covers every release up to and including `6.6.1`, which is also the latest one ever published, so no `overrides` entry can resolve it. The only fix `npm audit fix --force` knows how to propose is a downgrade to the long-unmaintained `secp256k1@1.1.6`, and it should not be applied. Note that `elliptic` would remain in the dependency tree in any case, since `secp256k1` depends on it.
+
+The actual exposure of this library is limited. The advisory concerns the truncation of the RFC 6979 nonce during __ECDSA signing only__: ECDH derivation is out of its scope. The NodeJS implementation signs through the native `secp256k1` bindings, and therefore only reaches the affected code path when those bindings fail to load and `secp256k1` falls back to its pure-JS `elliptic` backend. The Browser implementation, on the other hand, always signs through `elliptic`.
+
+Both findings being of `low` severity, a CI pipeline can be kept green without resorting to `--force`:
+```console
+$ npm audit --omit=dev --audit-level=moderate
+```
+
 
 ### Credits
 

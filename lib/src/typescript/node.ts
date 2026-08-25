@@ -31,10 +31,13 @@ import secp256k1 from 'secp256k1'
 
 const ec = new EC('secp256k1')
 
-const sha256 = (msg: BinaryLike): Buffer =>
+// `BinaryLike` also covers `ArrayBufferLike` which `Hash#update()`/`Hmac#update()` don't accept
+type UpdateLike = string | NodeJS.ArrayBufferView
+
+const sha256 = (msg: UpdateLike): Buffer =>
   createHash('sha256').update(msg).digest()
 
-const hmacSha256 = (key: BinaryLike, msg: BinaryLike): Buffer =>
+const hmacSha256 = (key: BinaryLike, msg: UpdateLike): Buffer =>
   createHmac('sha256', key).update(msg).digest()
 
 const aes128CtrEncrypt = (iv: Buffer, key: Buffer, plaintext: Buffer): Buffer => {
